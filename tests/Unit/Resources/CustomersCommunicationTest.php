@@ -1,76 +1,61 @@
 <?php
 
-namespace alexbabintsev\Magicline\Tests\Unit\Resources;
-
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\CustomersCommunication;
-use alexbabintsev\Magicline\Tests\TestCase;
 
-class CustomersCommunicationTest extends TestCase
-{
-    protected CustomersCommunication $resource;
+beforeEach(function () {
+    $this->client = $this->createMock(MagiclineClient::class);
+    $this->resource = new CustomersCommunication($this->client);
+});
 
-    protected MagiclineClient $client;
+test('create thread', function () {
+    $customerId = 123;
+    $data = [
+        'subject' => 'Support Request',
+        'message' => 'I need help with my membership',
+        'priority' => 'normal',
+    ];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->client = $this->createMock(MagiclineClient::class);
-        $this->resource = new CustomersCommunication($this->client);
-    }
-
-    public function test_create_thread()
-    {
-        $customerId = 123;
-        $data = [
+    $expectedResponse = [
+        'data' => [
+            'threadId' => 'thread-456',
+            'customerId' => 123,
             'subject' => 'Support Request',
-            'message' => 'I need help with my membership',
-            'priority' => 'normal',
-        ];
+            'status' => 'open',
+        ],
+    ];
 
-        $expectedResponse = [
-            'data' => [
-                'threadId' => 'thread-456',
-                'customerId' => 123,
-                'subject' => 'Support Request',
-                'status' => 'open',
-            ],
-        ];
+    $this->client
+        ->expects($this->once())
+        ->method('post')
+        ->with("/v1/communications/{$customerId}/threads", $data)
+        ->willReturn($expectedResponse);
 
-        $this->client
-            ->expects($this->once())
-            ->method('post')
-            ->with("/v1/communications/{$customerId}/threads", $data)
-            ->willReturn($expectedResponse);
+    $result = $this->resource->createThread($customerId, $data);
 
-        $result = $this->resource->createThread($customerId, $data);
+    expect($result)->toBe($expectedResponse);
+});
 
-        expect($result)->toBe($expectedResponse);
-    }
+test('add to thread', function () {
+    $customerId = 123;
+    $threadId = 'thread-456';
+    $data = [
+        'message' => 'Thank you for the quick response!',
+        'sender' => 'customer',
+    ];
 
-    public function test_add_to_thread()
-    {
-        $customerId = 123;
-        $threadId = 'thread-456';
-        $data = [
-            'message' => 'Thank you for the quick response!',
-            'sender' => 'customer',
-        ];
+    $expectedResponse = [
+        'success' => true,
+        'messageId' => 'msg-789',
+    ];
 
-        $expectedResponse = [
-            'success' => true,
-            'messageId' => 'msg-789',
-        ];
+    $this->client
+        ->expects($this->once())
+        ->method('post')
+        ->with("/v1/communications/{$customerId}/threads/{$threadId}", $data)
+        ->willReturn($expectedResponse);
 
-        $this->client
-            ->expects($this->once())
-            ->method('post')
-            ->with("/v1/communications/{$customerId}/threads/{$threadId}", $data)
-            ->willReturn($expectedResponse);
+    $result = $this->resource->addToThread($customerId, $threadId, $data);
 
-        $result = $this->resource->addToThread($customerId, $threadId, $data);
-
-        expect($result)->toBe($expectedResponse);
-    }
-}
+    expect($result)->toBe($expectedResponse);
+});

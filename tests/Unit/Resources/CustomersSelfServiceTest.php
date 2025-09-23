@@ -1,70 +1,55 @@
 <?php
 
-namespace alexbabintsev\Magicline\Tests\Unit\Resources;
-
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\CustomersSelfService;
-use alexbabintsev\Magicline\Tests\TestCase;
 
-class CustomersSelfServiceTest extends TestCase
-{
-    protected CustomersSelfService $resource;
+beforeEach(function () {
+    $this->client = $this->createMock(MagiclineClient::class);
+    $this->resource = new CustomersSelfService($this->client);
+});
 
-    protected MagiclineClient $client;
+test('get contact data', function () {
+    $customerId = 123;
+    $expectedResponse = [
+        'data' => [
+            'id' => 123,
+            'firstName' => 'John',
+            'lastName' => 'Doe',
+            'email' => 'john@example.com',
+            'phone' => '+49123456789',
+        ],
+    ];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with("/v1/customers/{$customerId}/self-service/contact-data")
+        ->willReturn($expectedResponse);
 
-        $this->client = $this->createMock(MagiclineClient::class);
-        $this->resource = new CustomersSelfService($this->client);
-    }
+    $result = $this->resource->getContactData($customerId);
 
-    public function test_get_contact_data()
-    {
-        $customerId = 123;
-        $expectedResponse = [
-            'data' => [
-                'id' => 123,
-                'firstName' => 'John',
-                'lastName' => 'Doe',
-                'email' => 'john@example.com',
-                'phone' => '+49123456789',
-            ],
-        ];
+    expect($result)->toBe($expectedResponse);
+});
 
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with("/v1/customers/{$customerId}/self-service/contact-data")
-            ->willReturn($expectedResponse);
+test('create contact data amendment', function () {
+    $customerId = 123;
+    $data = [
+        'email' => 'newemail@example.com',
+        'phone' => '+49987654321',
+    ];
 
-        $result = $this->resource->getContactData($customerId);
+    $expectedResponse = [
+        'success' => true,
+        'message' => 'Contact data amendment created',
+    ];
 
-        expect($result)->toBe($expectedResponse);
-    }
+    $this->client
+        ->expects($this->once())
+        ->method('post')
+        ->with("/v1/customers/{$customerId}/self-service/contact-data", $data)
+        ->willReturn($expectedResponse);
 
-    public function test_create_contact_data_amendment()
-    {
-        $customerId = 123;
-        $data = [
-            'email' => 'newemail@example.com',
-            'phone' => '+49987654321',
-        ];
+    $result = $this->resource->createContactDataAmendment($customerId, $data);
 
-        $expectedResponse = [
-            'success' => true,
-            'message' => 'Contact data amendment created',
-        ];
-
-        $this->client
-            ->expects($this->once())
-            ->method('post')
-            ->with("/v1/customers/{$customerId}/self-service/contact-data", $data)
-            ->willReturn($expectedResponse);
-
-        $result = $this->resource->createContactDataAmendment($customerId, $data);
-
-        expect($result)->toBe($expectedResponse);
-    }
-}
+    expect($result)->toBe($expectedResponse);
+});

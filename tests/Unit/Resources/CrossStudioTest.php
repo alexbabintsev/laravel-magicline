@@ -1,47 +1,33 @@
 <?php
 
-namespace alexbabintsev\Magicline\Tests\Unit\Resources;
-
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\CrossStudio;
-use alexbabintsev\Magicline\Tests\TestCase;
 
-class CrossStudioTest extends TestCase
-{
-    protected CrossStudio $resource;
+beforeEach(function () {
+    $this->client = $this->createMock(MagiclineClient::class);
+    $this->resource = new CrossStudio($this->client);
+});
 
-    protected MagiclineClient $client;
+test('get customers by', function () {
+    $criteria = [
+        'email' => 'test@example.com',
+        'phone' => '+49123456789',
+    ];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $expectedResponse = [
+        'data' => [
+            ['id' => 1, 'firstName' => 'John', 'email' => 'test@example.com'],
+            ['id' => 2, 'firstName' => 'Jane', 'phone' => '+49123456789'],
+        ],
+    ];
 
-        $this->client = $this->createMock(MagiclineClient::class);
-        $this->resource = new CrossStudio($this->client);
-    }
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with('/v1/cross-studio/customers/by', $criteria)
+        ->willReturn($expectedResponse);
 
-    public function test_get_customers_by()
-    {
-        $criteria = [
-            'email' => 'test@example.com',
-            'phone' => '+49123456789',
-        ];
+    $result = $this->resource->getCustomersBy($criteria);
 
-        $expectedResponse = [
-            'data' => [
-                ['id' => 1, 'firstName' => 'John', 'email' => 'test@example.com'],
-                ['id' => 2, 'firstName' => 'Jane', 'phone' => '+49123456789'],
-            ],
-        ];
-
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with('/v1/cross-studio/customers/by', $criteria)
-            ->willReturn($expectedResponse);
-
-        $result = $this->resource->getCustomersBy($criteria);
-
-        expect($result)->toBe($expectedResponse);
-    }
-}
+    expect($result)->toBe($expectedResponse);
+});

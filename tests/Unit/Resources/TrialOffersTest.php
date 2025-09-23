@@ -1,100 +1,83 @@
 <?php
 
-namespace alexbabintsev\Magicline\Tests\Unit\Resources;
-
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\TrialOffers;
-use alexbabintsev\Magicline\Tests\TestCase;
 
-class TrialOffersTest extends TestCase
-{
-    protected TrialOffers $resource;
+beforeEach(function () {
+    $this->client = $this->createMock(MagiclineClient::class);
+    $this->resource = new TrialOffers($this->client);
+});
 
-    protected MagiclineClient $client;
+test('get bookable classes without pagination', function () {
+    $expectedResponse = [
+        'data' => [
+            ['id' => 1, 'name' => 'Trial Yoga Class', 'date' => '2024-01-15'],
+            ['id' => 2, 'name' => 'Trial Fitness Class', 'date' => '2024-01-16'],
+        ],
+    ];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with('/v1/trial-offers/bookable-trial-offers/classes', [])
+        ->willReturn($expectedResponse);
 
-        $this->client = $this->createMock(MagiclineClient::class);
-        $this->resource = new TrialOffers($this->client);
-    }
+    $result = $this->resource->getBookableClasses();
 
-    public function test_get_bookable_classes_without_pagination()
-    {
-        $expectedResponse = [
-            'data' => [
-                ['id' => 1, 'name' => 'Trial Yoga Class', 'date' => '2024-01-15'],
-                ['id' => 2, 'name' => 'Trial Fitness Class', 'date' => '2024-01-16'],
-            ],
-        ];
+    expect($result)->toBe($expectedResponse);
+});
 
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with('/v1/trial-offers/bookable-trial-offers/classes', [])
-            ->willReturn($expectedResponse);
+test('get bookable classes with pagination', function () {
+    $expectedResponse = [
+        'data' => [
+            ['id' => 3, 'name' => 'Trial Pilates Class', 'date' => '2024-01-17'],
+        ],
+    ];
 
-        $result = $this->resource->getBookableClasses();
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with('/v1/trial-offers/bookable-trial-offers/classes', ['offset' => '10', 'sliceSize' => 25])
+        ->willReturn($expectedResponse);
 
-        expect($result)->toBe($expectedResponse);
-    }
+    $result = $this->resource->getBookableClasses(10, 25);
 
-    public function test_get_bookable_classes_with_pagination()
-    {
-        $expectedResponse = [
-            'data' => [
-                ['id' => 3, 'name' => 'Trial Pilates Class', 'date' => '2024-01-17'],
-            ],
-        ];
+    expect($result)->toBe($expectedResponse);
+});
 
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with('/v1/trial-offers/bookable-trial-offers/classes', ['offset' => '10', 'sliceSize' => 25])
-            ->willReturn($expectedResponse);
+test('get bookable appointments without pagination', function () {
+    $expectedResponse = [
+        'data' => [
+            ['id' => 1, 'title' => 'Trial Personal Training', 'date' => '2024-01-15'],
+            ['id' => 2, 'title' => 'Trial Consultation', 'date' => '2024-01-16'],
+        ],
+    ];
 
-        $result = $this->resource->getBookableClasses(10, 25);
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with('/v1/trial-offers/bookable-trial-offers/appointments/bookable', [])
+        ->willReturn($expectedResponse);
 
-        expect($result)->toBe($expectedResponse);
-    }
+    $result = $this->resource->getBookableAppointments();
 
-    public function test_get_bookable_appointments_without_pagination()
-    {
-        $expectedResponse = [
-            'data' => [
-                ['id' => 1, 'title' => 'Trial Personal Training', 'date' => '2024-01-15'],
-                ['id' => 2, 'title' => 'Trial Consultation', 'date' => '2024-01-16'],
-            ],
-        ];
+    expect($result)->toBe($expectedResponse);
+});
 
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with('/v1/trial-offers/bookable-trial-offers/appointments/bookable', [])
-            ->willReturn($expectedResponse);
+test('get bookable appointments with pagination', function () {
+    $expectedResponse = [
+        'data' => [
+            ['id' => 3, 'title' => 'Trial Nutrition Consultation', 'date' => '2024-01-17'],
+        ],
+    ];
 
-        $result = $this->resource->getBookableAppointments();
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with('/v1/trial-offers/bookable-trial-offers/appointments/bookable', ['offset' => '20', 'sliceSize' => 50])
+        ->willReturn($expectedResponse);
 
-        expect($result)->toBe($expectedResponse);
-    }
+    $result = $this->resource->getBookableAppointments(20, 50);
 
-    public function test_get_bookable_appointments_with_pagination()
-    {
-        $expectedResponse = [
-            'data' => [
-                ['id' => 3, 'title' => 'Trial Nutrition Consultation', 'date' => '2024-01-17'],
-            ],
-        ];
-
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with('/v1/trial-offers/bookable-trial-offers/appointments/bookable', ['offset' => '20', 'sliceSize' => 50])
-            ->willReturn($expectedResponse);
-
-        $result = $this->resource->getBookableAppointments(20, 50);
-
-        expect($result)->toBe($expectedResponse);
-    }
-}
+    expect($result)->toBe($expectedResponse);
+});

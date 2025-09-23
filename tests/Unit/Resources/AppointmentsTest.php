@@ -1,69 +1,53 @@
 <?php
 
-namespace alexbabintsev\Magicline\Tests\Unit\Resources;
-
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\Appointments;
-use alexbabintsev\Magicline\Tests\TestCase;
 
-class AppointmentsTest extends TestCase
-{
-    protected Appointments $resource;
+beforeEach(function () {
+    $this->client = $this->createMock(MagiclineClient::class);
+    $this->resource = new Appointments($this->client);
+});
 
-    protected MagiclineClient $client;
+test('get bookable appointments', function () {
+    $expectedResponse = ['data' => ['appointments']];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with('/v1/appointments/bookable', [])
+        ->willReturn($expectedResponse);
 
-        $this->client = $this->createMock(MagiclineClient::class);
-        $this->resource = new Appointments($this->client);
-    }
+    $result = $this->resource->getBookable();
 
-    public function test_get_bookable_appointments()
-    {
-        $expectedResponse = ['data' => ['appointments']];
+    expect($result)->toBe($expectedResponse);
+});
 
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with('/v1/appointments/bookable', [])
-            ->willReturn($expectedResponse);
+test('book appointment', function () {
+    $data = ['appointmentId' => 123, 'customerId' => 456];
+    $expectedResponse = ['success' => true];
 
-        $result = $this->resource->getBookable();
+    $this->client
+        ->expects($this->once())
+        ->method('post')
+        ->with('/v1/appointments', $data)
+        ->willReturn($expectedResponse);
 
-        expect($result)->toBe($expectedResponse);
-    }
+    $result = $this->resource->book($data);
 
-    public function test_book_appointment()
-    {
-        $data = ['appointmentId' => 123, 'customerId' => 456];
-        $expectedResponse = ['success' => true];
+    expect($result)->toBe($expectedResponse);
+});
 
-        $this->client
-            ->expects($this->once())
-            ->method('post')
-            ->with('/v1/appointments', $data)
-            ->willReturn($expectedResponse);
+test('cancel appointment', function () {
+    $appointmentId = 789;
+    $expectedResponse = ['success' => true];
 
-        $result = $this->resource->book($data);
+    $this->client
+        ->expects($this->once())
+        ->method('delete')
+        ->with("/v1/appointments/{$appointmentId}")
+        ->willReturn($expectedResponse);
 
-        expect($result)->toBe($expectedResponse);
-    }
+    $result = $this->resource->cancel($appointmentId);
 
-    public function test_cancel_appointment()
-    {
-        $appointmentId = 789;
-        $expectedResponse = ['success' => true];
-
-        $this->client
-            ->expects($this->once())
-            ->method('delete')
-            ->with("/v1/appointments/{$appointmentId}")
-            ->willReturn($expectedResponse);
-
-        $result = $this->resource->cancel($appointmentId);
-
-        expect($result)->toBe($expectedResponse);
-    }
-}
+    expect($result)->toBe($expectedResponse);
+});

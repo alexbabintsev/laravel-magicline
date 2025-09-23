@@ -1,84 +1,68 @@
 <?php
 
-namespace alexbabintsev\Magicline\Tests\Unit\Resources;
-
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\Customers;
-use alexbabintsev\Magicline\Tests\TestCase;
 
-class CustomersTest extends TestCase
-{
-    protected Customers $resource;
+beforeEach(function () {
+    $this->client = $this->createMock(MagiclineClient::class);
+    $this->resource = new Customers($this->client);
+});
 
-    protected MagiclineClient $client;
+test('list without pagination', function () {
+    $expectedResponse = [
+        'data' => [
+            ['id' => 1, 'firstName' => 'John', 'lastName' => 'Doe'],
+            ['id' => 2, 'firstName' => 'Jane', 'lastName' => 'Smith'],
+        ],
+    ];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with('/v1/customers', [])
+        ->willReturn($expectedResponse);
 
-        $this->client = $this->createMock(MagiclineClient::class);
-        $this->resource = new Customers($this->client);
-    }
+    $result = $this->resource->list();
 
-    public function test_list_without_pagination()
-    {
-        $expectedResponse = [
-            'data' => [
-                ['id' => 1, 'firstName' => 'John', 'lastName' => 'Doe'],
-                ['id' => 2, 'firstName' => 'Jane', 'lastName' => 'Smith'],
-            ],
-        ];
+    expect($result)->toBe($expectedResponse);
+});
 
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with('/v1/customers', [])
-            ->willReturn($expectedResponse);
+test('list with pagination', function () {
+    $expectedResponse = [
+        'data' => [
+            ['id' => 3, 'firstName' => 'Bob', 'lastName' => 'Johnson'],
+        ],
+    ];
 
-        $result = $this->resource->list();
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with('/v1/customers', ['offset' => '10', 'sliceSize' => 25])
+        ->willReturn($expectedResponse);
 
-        expect($result)->toBe($expectedResponse);
-    }
+    $result = $this->resource->list(10, 25);
 
-    public function test_list_with_pagination()
-    {
-        $expectedResponse = [
-            'data' => [
-                ['id' => 3, 'firstName' => 'Bob', 'lastName' => 'Johnson'],
-            ],
-        ];
+    expect($result)->toBe($expectedResponse);
+});
 
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with('/v1/customers', ['offset' => '10', 'sliceSize' => 25])
-            ->willReturn($expectedResponse);
+test('find', function () {
+    $customerId = 123;
+    $expectedResponse = [
+        'data' => [
+            'id' => 123,
+            'firstName' => 'John',
+            'lastName' => 'Doe',
+            'email' => 'john@example.com',
+        ],
+    ];
 
-        $result = $this->resource->list(10, 25);
+    $this->client
+        ->expects($this->once())
+        ->method('get')
+        ->with("/v1/customers/{$customerId}")
+        ->willReturn($expectedResponse);
 
-        expect($result)->toBe($expectedResponse);
-    }
+    $result = $this->resource->find($customerId);
 
-    public function test_find()
-    {
-        $customerId = 123;
-        $expectedResponse = [
-            'data' => [
-                'id' => 123,
-                'firstName' => 'John',
-                'lastName' => 'Doe',
-                'email' => 'john@example.com',
-            ],
-        ];
-
-        $this->client
-            ->expects($this->once())
-            ->method('get')
-            ->with("/v1/customers/{$customerId}")
-            ->willReturn($expectedResponse);
-
-        $result = $this->resource->find($customerId);
-
-        expect($result)->toBe($expectedResponse);
-    }
-}
+    expect($result)->toBe($expectedResponse);
+});

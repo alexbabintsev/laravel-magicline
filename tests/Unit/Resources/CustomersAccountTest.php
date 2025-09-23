@@ -4,8 +4,8 @@ use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\CustomersAccount;
 
 beforeEach(function () {
-    $this->client = Mockery::mock(MagiclineClient::class);
-    $this->resource = new CustomersAccount($this->client);
+    $this->mockClient = Mockery::mock(MagiclineClient::class);
+    $this->resource = new CustomersAccount($this->mockClient);
 });
 
 test('get balances', function () {
@@ -21,7 +21,7 @@ test('get balances', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with("/v1/customers/{$customerId}/account/balances")

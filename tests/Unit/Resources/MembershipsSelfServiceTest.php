@@ -4,8 +4,8 @@ use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\MembershipsSelfService;
 
 beforeEach(function () {
-    $this->client = Mockery::mock(MagiclineClient::class);
-    $this->resource = new MembershipsSelfService($this->client);
+    $this->mockClient = Mockery::mock(MagiclineClient::class);
+    $this->resource = new MembershipsSelfService($this->mockClient);
 });
 
 test('get contract data', function () {
@@ -21,7 +21,7 @@ test('get contract data', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with("/v1/memberships/{$customerId}/self-service/contract-data")
@@ -45,7 +45,7 @@ test('cancel ordinary contract', function () {
         'effectiveDate' => '2024-03-31',
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('post')
         ->once()
         ->with("/v1/memberships/{$customerId}/self-service/ordinary-contract-cancelation", $data)

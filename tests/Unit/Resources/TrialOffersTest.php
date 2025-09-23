@@ -4,8 +4,8 @@ use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\TrialOffers;
 
 beforeEach(function () {
-    $this->client = Mockery::mock(MagiclineClient::class);
-    $this->resource = new TrialOffers($this->client);
+    $this->mockClient = Mockery::mock(MagiclineClient::class);
+    $this->resource = new TrialOffers($this->mockClient);
 });
 
 test('get bookable classes without pagination', function () {
@@ -16,7 +16,7 @@ test('get bookable classes without pagination', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with('/v1/trial-offers/bookable-trial-offers/classes', [])
@@ -34,7 +34,7 @@ test('get bookable classes with pagination', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with('/v1/trial-offers/bookable-trial-offers/classes', ['offset' => '10', 'sliceSize' => 25])
@@ -53,7 +53,7 @@ test('get bookable appointments without pagination', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with('/v1/trial-offers/bookable-trial-offers/appointments/bookable', [])
@@ -71,7 +71,7 @@ test('get bookable appointments with pagination', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with('/v1/trial-offers/bookable-trial-offers/appointments/bookable', ['offset' => '20', 'sliceSize' => 50])

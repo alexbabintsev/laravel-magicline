@@ -4,8 +4,8 @@ use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\CustomersCommunication;
 
 beforeEach(function () {
-    $this->client = Mockery::mock(MagiclineClient::class);
-    $this->resource = new CustomersCommunication($this->client);
+    $this->mockClient = Mockery::mock(MagiclineClient::class);
+    $this->resource = new CustomersCommunication($this->mockClient);
 });
 
 test('create thread', function () {
@@ -25,7 +25,7 @@ test('create thread', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('post')
         ->once()
         ->with("/v1/communications/{$customerId}/threads", $data)
@@ -49,7 +49,7 @@ test('add to thread', function () {
         'messageId' => 'msg-789',
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('post')
         ->once()
         ->with("/v1/communications/{$customerId}/threads/{$threadId}", $data)

@@ -4,8 +4,8 @@ use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\CheckinVouchers;
 
 beforeEach(function () {
-    $this->client = Mockery::mock(MagiclineClient::class);
-    $this->resource = new CheckinVouchers($this->client);
+    $this->mockClient = Mockery::mock(MagiclineClient::class);
+    $this->resource = new CheckinVouchers($this->mockClient);
 });
 
 test('redeem voucher', function () {
@@ -19,7 +19,7 @@ test('redeem voucher', function () {
         'message' => 'Voucher redeemed successfully',
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('post')
         ->once()
         ->with('/v1/checkin-vouchers/redeem', $data)

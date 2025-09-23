@@ -4,14 +4,14 @@ use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\Appointments;
 
 beforeEach(function () {
-    $this->client = Mockery::mock(MagiclineClient::class);
-    $this->resource = new Appointments($this->client);
+    $this->mockClient = Mockery::mock(MagiclineClient::class);
+    $this->resource = new Appointments($this->mockClient);
 });
 
 test('get bookable appointments', function () {
     $expectedResponse = ['data' => ['appointments']];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with('/v1/appointments/bookable', [])
@@ -26,7 +26,7 @@ test('book appointment', function () {
     $data = ['appointmentId' => 123, 'customerId' => 456];
     $expectedResponse = ['success' => true];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('post')
         ->once()
         ->with('/v1/appointments', $data)
@@ -41,7 +41,7 @@ test('cancel appointment', function () {
     $appointmentId = 789;
     $expectedResponse = ['success' => true];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('delete')
         ->once()
         ->with("/v1/appointments/{$appointmentId}")

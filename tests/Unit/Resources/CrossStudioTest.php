@@ -4,8 +4,8 @@ use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\CrossStudio;
 
 beforeEach(function () {
-    $this->client = Mockery::mock(MagiclineClient::class);
-    $this->resource = new CrossStudio($this->client);
+    $this->mockClient = Mockery::mock(MagiclineClient::class);
+    $this->resource = new CrossStudio($this->mockClient);
 });
 
 test('get customers by', function () {
@@ -21,7 +21,7 @@ test('get customers by', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with('/v1/cross-studio/customers/by', $criteria)

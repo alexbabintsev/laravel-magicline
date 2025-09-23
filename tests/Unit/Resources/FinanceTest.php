@@ -4,8 +4,8 @@ use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\Finance;
 
 beforeEach(function () {
-    $this->client = Mockery::mock(MagiclineClient::class);
-    $this->resource = new Finance($this->client);
+    $this->mockClient = Mockery::mock(MagiclineClient::class);
+    $this->resource = new Finance($this->mockClient);
 });
 
 test('get debt collection configuration', function () {
@@ -22,7 +22,7 @@ test('get debt collection configuration', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with('/v1/debt-collection/configuration')

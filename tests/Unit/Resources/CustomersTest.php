@@ -4,8 +4,8 @@ use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\Customers;
 
 beforeEach(function () {
-    $this->client = Mockery::mock(MagiclineClient::class);
-    $this->resource = new Customers($this->client);
+    $this->mockClient = Mockery::mock(MagiclineClient::class);
+    $this->resource = new Customers($this->mockClient);
 });
 
 test('list without pagination', function () {
@@ -16,7 +16,7 @@ test('list without pagination', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with('/v1/customers', [])
@@ -34,7 +34,7 @@ test('list with pagination', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with('/v1/customers', ['offset' => '10', 'sliceSize' => 25])
@@ -56,7 +56,7 @@ test('find', function () {
         ],
     ];
 
-    $this->client
+    $this->mockClient
         ->shouldReceive('get')
         ->once()
         ->with("/v1/customers/{$customerId}")

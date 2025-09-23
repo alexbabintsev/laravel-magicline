@@ -30,3 +30,9 @@ phpstan.neon
 testbench.yaml
 /docs
 /coverage
+
+/.claude
+/.github
+/.junie
+.mcp.json
+CLAUDE.md

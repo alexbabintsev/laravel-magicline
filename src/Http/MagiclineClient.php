@@ -17,22 +17,24 @@ class MagiclineClient
     private PendingRequest $httpClient;
 
     public function __construct(
-        private Factory $httpFactory,
-        private string $apiKey,
-        private string $baseUrl,
-        private int $timeout = 30,
-        private array $retryConfig = ['times' => 3, 'sleep' => 100],
-        private bool $loggingEnabled = false,
-        private string $logLevel = 'debug',
-        private ?LoggerInterface $logger = null
+        private readonly Factory $httpFactory,
+        private readonly string $apiKey,
+        private readonly string $baseUrl,
+        private readonly int $timeout = 30,
+        private readonly array $retryConfig = ['times' => 3, 'sleep' => 100],
+        private readonly bool $loggingEnabled = false,
+        private readonly string $logLevel = 'debug',
+        private readonly ?LoggerInterface $logger = null
     ) {
         $this->httpClient = $this->buildHttpClient();
     }
 
     private function buildHttpClient(): PendingRequest
     {
-        return $this->httpFactory
-            ->baseUrl($this->baseUrl)
+        /** @var PendingRequest $client */
+        $client = $this->httpFactory->baseUrl($this->baseUrl);
+
+        return $client
             ->withHeaders([
                 'x-api-key' => $this->apiKey,
                 'Accept' => 'application/json',

@@ -33,8 +33,8 @@ test('build query filters null values', function () {
 
     $result = $this->resource->test_build_query($params);
 
-    expect($result)->toBe(['key1' => 'value1', 'key3' => 'value3']);
-    expect($result)->not->toHaveKey('key2');
+    expect($result)->toBe(['key1' => 'value1', 'key3' => 'value3'])
+        ->and($result)->not->toHaveKey('key2');
 });
 
 test('validate pagination with valid values', function () {

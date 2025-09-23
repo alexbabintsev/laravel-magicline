@@ -20,14 +20,14 @@ test('customer can be created from array', function () {
 
     $customer = Customer::from($data);
 
-    expect($customer->id)->toBe(123);
-    expect($customer->firstName)->toBe('John');
-    expect($customer->lastName)->toBe('Doe');
-    expect($customer->email)->toBe('john@example.com');
-    expect($customer->phone)->toBe('+1234567890');
-    expect($customer->address)->toBeInstanceOf(Address::class);
-    expect($customer->address->street)->toBe('123 Main St');
-    expect($customer->address->city)->toBe('Anytown');
+    expect($customer->id)->toBe(123)
+        ->and($customer->firstName)->toBe('John')
+        ->and($customer->lastName)->toBe('Doe')
+        ->and($customer->email)->toBe('john@example.com')
+        ->and($customer->phone)->toBe('+1234567890')
+        ->and($customer->address)->toBeInstanceOf(Address::class)
+        ->and($customer->address->street)->toBe('123 Main St')
+        ->and($customer->address->city)->toBe('Anytown');
 });
 
 test('customer to array', function () {
@@ -40,10 +40,10 @@ test('customer to array', function () {
 
     $array = $customer->toArray();
 
-    expect($array['id'])->toBe(123);
-    expect($array['firstName'])->toBe('John');
-    expect($array['lastName'])->toBe('Doe');
-    expect($array['email'])->toBe('john@example.com');
+    expect($array['id'])->toBe(123)
+        ->and($array['firstName'])->toBe('John')
+        ->and($array['lastName'])->toBe('Doe')
+        ->and($array['email'])->toBe('john@example.com');
 });
 
 test('customer collection', function () {
@@ -54,8 +54,8 @@ test('customer collection', function () {
 
     $customers = Customer::collection($data);
 
-    expect($customers)->toHaveCount(2);
-    expect($customers[0])->toBeInstanceOf(Customer::class);
-    expect($customers[0]->firstName)->toBe('John');
-    expect($customers[1]->firstName)->toBe('Jane');
+    expect($customers)->toHaveCount(2)
+        ->and($customers[0])->toBeInstanceOf(Customer::class)
+        ->and($customers[0]->firstName)->toBe('John')
+        ->and($customers[1]->firstName)->toBe('Jane');
 });

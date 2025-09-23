@@ -14,11 +14,11 @@ test('address can be created from array', function () {
 
     $address = Address::from($data);
 
-    expect($address->street)->toBe('Main Street 123');
-    expect($address->city)->toBe('Berlin');
-    expect($address->postalCode)->toBe('10115');
-    expect($address->country)->toBe('Germany');
-    expect($address->state)->toBe('Berlin');
+    expect($address->street)->toBe('Main Street 123')
+        ->and($address->city)->toBe('Berlin')
+        ->and($address->postalCode)->toBe('10115')
+        ->and($address->country)->toBe('Germany')
+        ->and($address->state)->toBe('Berlin');
 });
 
 test('address to array', function () {
@@ -31,11 +31,11 @@ test('address to array', function () {
 
     $array = $address->toArray();
 
-    expect($array['street'])->toBe('Test Street 456');
-    expect($array['city'])->toBe('Munich');
-    expect($array['postalCode'])->toBe('80331');
-    expect($array['country'])->toBe('Germany');
-    expect($array['state'])->toBeNull();
+    expect($array['street'])->toBe('Test Street 456')
+        ->and($array['city'])->toBe('Munich')
+        ->and($array['postalCode'])->toBe('80331')
+        ->and($array['country'])->toBe('Germany')
+        ->and($array['state'])->toBeNull();
 });
 
 test('address collection', function () {
@@ -46,10 +46,10 @@ test('address collection', function () {
 
     $addresses = Address::collection($data);
 
-    expect($addresses)->toHaveCount(2);
-    expect($addresses[0])->toBeInstanceOf(Address::class);
-    expect($addresses[0]->street)->toBe('Street 1');
-    expect($addresses[1]->city)->toBe('City 2');
+    expect($addresses)->toHaveCount(2)
+        ->and($addresses[0])->toBeInstanceOf(Address::class)
+        ->and($addresses[0]->street)->toBe('Street 1')
+        ->and($addresses[1]->city)->toBe('City 2');
 });
 
 test('address with partial data', function () {
@@ -57,8 +57,8 @@ test('address with partial data', function () {
 
     $address = Address::from($data);
 
-    expect($address->street)->toBeNull();
-    expect($address->city)->toBe('Hamburg');
-    expect($address->postalCode)->toBeNull();
-    expect($address->country)->toBe('Germany');
+    expect($address->street)->toBeNull()
+        ->and($address->city)->toBe('Hamburg')
+        ->and($address->postalCode)->toBeNull()
+        ->and($address->country)->toBe('Germany');
 });

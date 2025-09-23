@@ -19,11 +19,11 @@ test('appointment can be created from array', function () {
 
     $appointment = Appointment::from($data);
 
-    expect($appointment->id)->toBe(123);
-    expect($appointment->title)->toBe('Personal Training Session');
-    expect($appointment->customerId)->toBe(456);
-    expect($appointment->employeeId)->toBe(789);
-    expect($appointment->isBookable)->toBeTrue();
+    expect($appointment->id)->toBe(123)
+        ->and($appointment->title)->toBe('Personal Training Session')
+        ->and($appointment->customerId)->toBe(456)
+        ->and($appointment->employeeId)->toBe(789)
+        ->and($appointment->isBookable)->toBeTrue();
 });
 
 test('appointment to array', function () {
@@ -36,10 +36,10 @@ test('appointment to array', function () {
 
     $array = $appointment->toArray();
 
-    expect($array['id'])->toBe(456);
-    expect($array['title'])->toBe('Group Class');
-    expect($array['status'])->toBe('pending');
-    expect($array['isBookable'])->toBeFalse();
+    expect($array['id'])->toBe(456)
+        ->and($array['title'])->toBe('Group Class')
+        ->and($array['status'])->toBe('pending')
+        ->and($array['isBookable'])->toBeFalse();
 });
 
 test('appointment collection', function () {
@@ -50,8 +50,8 @@ test('appointment collection', function () {
 
     $appointments = Appointment::collection($data);
 
-    expect($appointments)->toHaveCount(2);
-    expect($appointments[0])->toBeInstanceOf(Appointment::class);
-    expect($appointments[0]->title)->toBe('Appointment 1');
-    expect($appointments[1]->status)->toBe('pending');
+    expect($appointments)->toHaveCount(2)
+        ->and($appointments[0])->toBeInstanceOf(Appointment::class)
+        ->and($appointments[0]->title)->toBe('Appointment 1')
+        ->and($appointments[1]->status)->toBe('pending');
 });

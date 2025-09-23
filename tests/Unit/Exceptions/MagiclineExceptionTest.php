@@ -43,30 +43,30 @@ test('exception stores error details', function () {
 test('authentication exception extends base', function () {
     $exception = new MagiclineAuthenticationException('Auth failed', 401);
 
-    expect($exception)->toBeInstanceOf(MagiclineException::class);
-    expect($exception->getHttpStatusCode())->toBe(401);
-    expect($exception->getMessage())->toBe('Auth failed');
+    expect($exception)->toBeInstanceOf(MagiclineException::class)
+        ->and($exception->getHttpStatusCode())->toBe(401)
+        ->and($exception->getMessage())->toBe('Auth failed');
 });
 
 test('authorization exception extends base', function () {
     $exception = new MagiclineAuthorizationException('Access denied', 403);
 
-    expect($exception)->toBeInstanceOf(MagiclineException::class);
-    expect($exception->getHttpStatusCode())->toBe(403);
+    expect($exception)->toBeInstanceOf(MagiclineException::class)
+        ->and($exception->getHttpStatusCode())->toBe(403);
 });
 
 test('validation exception extends base', function () {
     $exception = new MagiclineValidationException('Invalid data', 400);
 
-    expect($exception)->toBeInstanceOf(MagiclineException::class);
-    expect($exception->getHttpStatusCode())->toBe(400);
+    expect($exception)->toBeInstanceOf(MagiclineException::class)
+        ->and($exception->getHttpStatusCode())->toBe(400);
 });
 
 test('api exception extends base', function () {
     $exception = new MagiclineApiException('Server error', 500);
 
-    expect($exception)->toBeInstanceOf(MagiclineException::class);
-    expect($exception->getHttpStatusCode())->toBe(500);
+    expect($exception)->toBeInstanceOf(MagiclineException::class)
+        ->and($exception->getHttpStatusCode())->toBe(500);
 });
 
 test('exception with null error code', function () {

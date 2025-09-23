@@ -8,16 +8,16 @@ test('magicline client is registered as singleton', function () {
     $client1 = app(MagiclineClient::class);
     $client2 = app(MagiclineClient::class);
 
-    expect($client1)->toBeInstanceOf(MagiclineClient::class);
-    expect($client1)->toBe($client2);
+    expect($client1)->toBeInstanceOf(MagiclineClient::class)
+        ->and($client1)->toBe($client2);
 });
 
 test('magicline is registered as singleton', function () {
     $magicline1 = app(Magicline::class);
     $magicline2 = app(Magicline::class);
 
-    expect($magicline1)->toBeInstanceOf(Magicline::class);
-    expect($magicline1)->toBe($magicline2);
+    expect($magicline1)->toBeInstanceOf(Magicline::class)
+        ->and($magicline1)->toBe($magicline2);
 });
 
 test('magicline client uses config values', function () {
@@ -31,7 +31,7 @@ test('magicline client uses config values', function () {
 });
 
 test('service provider registers dependencies', function () {
-    expect(app()->bound(MagiclineClient::class))->toBeTrue();
-    expect(app()->bound(Magicline::class))->toBeTrue();
-    expect(app()->bound(Factory::class))->toBeTrue();
+    expect(app()->bound(MagiclineClient::class))->toBeTrue()
+        ->and(app()->bound(Magicline::class))->toBeTrue()
+        ->and(app()->bound(Factory::class))->toBeTrue();
 });

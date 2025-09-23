@@ -17,12 +17,12 @@ test('employee can be created from array', function () {
 
     $employee = Employee::from($data);
 
-    expect($employee->id)->toBe(123);
-    expect($employee->firstName)->toBe('John');
-    expect($employee->lastName)->toBe('Trainer');
-    expect($employee->email)->toBe('john@gym.com');
-    expect($employee->position)->toBe('Personal Trainer');
-    expect($employee->isActive)->toBeTrue();
+    expect($employee->id)->toBe(123)
+        ->and($employee->firstName)->toBe('John')
+        ->and($employee->lastName)->toBe('Trainer')
+        ->and($employee->email)->toBe('john@gym.com')
+        ->and($employee->position)->toBe('Personal Trainer')
+        ->and($employee->isActive)->toBeTrue();
 });
 
 test('employee to array', function () {
@@ -35,10 +35,10 @@ test('employee to array', function () {
 
     $array = $employee->toArray();
 
-    expect($array['id'])->toBe(456);
-    expect($array['firstName'])->toBe('Sarah');
-    expect($array['lastName'])->toBe('Manager');
-    expect($array['position'])->toBe('Gym Manager');
+    expect($array['id'])->toBe(456)
+        ->and($array['firstName'])->toBe('Sarah')
+        ->and($array['lastName'])->toBe('Manager')
+        ->and($array['position'])->toBe('Gym Manager');
 });
 
 test('employee collection', function () {
@@ -49,8 +49,8 @@ test('employee collection', function () {
 
     $employees = Employee::collection($data);
 
-    expect($employees)->toHaveCount(2);
-    expect($employees[0])->toBeInstanceOf(Employee::class);
-    expect($employees[0]->firstName)->toBe('John');
-    expect($employees[1]->position)->toBe('Manager');
+    expect($employees)->toHaveCount(2)
+        ->and($employees[0])->toBeInstanceOf(Employee::class)
+        ->and($employees[0]->firstName)->toBe('John')
+        ->and($employees[1]->position)->toBe('Manager');
 });

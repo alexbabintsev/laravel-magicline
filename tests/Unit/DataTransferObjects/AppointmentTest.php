@@ -3,6 +3,7 @@
 namespace alexbabintsev\Magicline\Tests\Unit\DataTransferObjects;
 
 use alexbabintsev\Magicline\DataTransferObjects\Appointment;
+
 test('appointment can be created from array', function () {
     $data = [
         'id' => 123,

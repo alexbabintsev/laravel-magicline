@@ -3,6 +3,7 @@
 namespace alexbabintsev\Magicline\Tests\Unit\DataTransferObjects;
 
 use alexbabintsev\Magicline\DataTransferObjects\Address;
+
 test('address can be created from array', function () {
     $data = [
         'street' => 'Main Street 123',

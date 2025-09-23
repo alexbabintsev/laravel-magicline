@@ -125,6 +125,183 @@ $offers = Magicline::memberships()->getOffers();
 
 // Get customer contract data
 $contracts = Magicline::membershipsSelfService()->getContractData(123);
+
+// Cancel membership contract
+$cancellation = Magicline::membershipsSelfService()->cancelOrdinaryContract(123, [
+    'reason' => 'Moving to another city',
+    'cancellationDate' => '2024-12-31'
+]);
+```
+
+### Payments
+
+```php
+// Create user payment session
+$paymentSession = Magicline::payments()->createUserSession([
+    'customerId' => 123,
+    'amount' => 5999, // in cents
+    'currency' => 'EUR',
+    'description' => 'Monthly membership fee',
+    'returnUrl' => 'https://yourapp.com/payment/success',
+    'cancelUrl' => 'https://yourapp.com/payment/cancel'
+]);
+```
+
+### Devices & Studio Management
+
+```php
+// List all gym devices
+$devices = Magicline::devices()->list();
+
+// Activate a specific device
+$activation = Magicline::devices()->activate('device-123');
+
+// Get studio utilization (current occupancy)
+$utilization = Magicline::studios()->getUtilization();
+echo "Current occupancy: {$utilization['currentCount']}/{$utilization['maxCapacity']}";
+```
+
+### Employees
+
+```php
+// List all employees with pagination
+$employees = Magicline::employees()->list(offset: 0, sliceSize: 25);
+
+// Access employee information
+foreach ($employees['data'] as $employee) {
+    echo "Employee: {$employee['firstName']} {$employee['lastName']}";
+    echo "Position: {$employee['position']}";
+}
+```
+
+### Customer Self-Service
+
+```php
+// Get customer contact data
+$contactData = Magicline::customersSelfService()->getContactData(123);
+
+// Request contact data amendment
+$amendment = Magicline::customersSelfService()->createContactDataAmendment(123, [
+    'email' => 'newemail@example.com',
+    'phone' => '+49123456789',
+    'address' => [
+        'street' => 'Neue Straße 456',
+        'city' => 'Berlin',
+        'postalCode' => '10115'
+    ]
+]);
+```
+
+### Customer Communication
+
+```php
+// Create new communication thread
+$thread = Magicline::customersCommunication()->createThread(123, [
+    'subject' => 'Question about membership',
+    'message' => 'I have a question about upgrading my membership.',
+    'priority' => 'normal'
+]);
+
+// Add message to existing thread
+$response = Magicline::customersCommunication()->addToThread(123, 'thread-456', [
+    'message' => 'Thank you for your quick response!',
+    'attachments' => []
+]);
+```
+
+### Customer Account Management
+
+```php
+// Get customer account balances
+$balances = Magicline::customersAccount()->getBalances(123);
+
+echo "Current balance: {$balances['currentBalance']} {$balances['currency']}";
+echo "Outstanding amount: {$balances['outstandingAmount']} {$balances['currency']}";
+```
+
+### Trial Offers
+
+```php
+// Get bookable trial classes
+$trialClasses = Magicline::trialOffers()->getBookableClasses(offset: 0, sliceSize: 20);
+
+// Get bookable trial appointments
+$trialAppointments = Magicline::trialOffers()->getBookableAppointments(offset: 0, sliceSize: 10);
+
+// Book trial class
+foreach ($trialClasses['data'] as $class) {
+    if ($class['availableSpots'] > 0) {
+        $booking = Magicline::classes()->book($class['id'], [
+            'customerId' => 456, // Trial customer
+            'notes' => 'First trial class'
+        ]);
+        break;
+    }
+}
+```
+
+### Check-in Vouchers
+
+```php
+// Redeem check-in voucher
+$redemption = Magicline::checkinVouchers()->redeem([
+    'voucherCode' => 'VOUCHER123',
+    'customerId' => 123,
+    'locationId' => 'gym-main'
+]);
+
+if ($redemption['success']) {
+    echo "Voucher redeemed successfully!";
+    echo "Remaining uses: {$redemption['remainingUses']}";
+}
+```
+
+### Cross Studio Operations
+
+```php
+// Find customers across multiple studios
+$crossStudioCustomers = Magicline::crossStudio()->getCustomersBy([
+    'email' => 'customer@example.com',
+    'includeInactive' => false
+]);
+
+// Access customer data from different studios
+foreach ($crossStudioCustomers['customers'] as $customer) {
+    echo "Found customer at studio: {$customer['studioName']}";
+    echo "Customer ID: {$customer['customerId']}";
+    echo "Status: {$customer['status']}";
+}
+```
+
+### Finance & Debt Collection
+
+```php
+// Get debt collection configuration
+$debtConfig = Magicline::finance()->getDebtCollectionConfiguration();
+
+echo "Grace period: {$debtConfig['gracePeriodDays']} days";
+echo "Late fee: {$debtConfig['lateFeeAmount']} {$debtConfig['currency']}";
+```
+
+### Advanced Usage with Pagination
+
+```php
+// Handle large datasets with pagination
+$offset = 0;
+$sliceSize = 100;
+$allCustomers = [];
+
+do {
+    $response = Magicline::customers()->list($offset, $sliceSize);
+    $customers = $response['data'];
+
+    $allCustomers = array_merge($allCustomers, $customers);
+    $offset += $sliceSize;
+
+    // Continue until we get less than requested slice size
+} while (count($customers) === $sliceSize);
+
+echo "Total customers loaded: " . count($allCustomers);
 ```
 
 ### Error Handling

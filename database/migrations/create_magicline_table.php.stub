@@ -6,14 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('laravel_magicline_table', function (Blueprint $table) {
+        Schema::create('magicline_sync_logs', function (Blueprint $table) {
             $table->id();
-
-            // add fields
-
+            $table->string('resource_type');
+            $table->string('resource_id')->nullable();
+            $table->string('action');
+            $table->json('request_data')->nullable();
+            $table->json('response_data')->nullable();
+            $table->string('status');
+            $table->text('error_message')->nullable();
+            $table->timestamp('synced_at');
             $table->timestamps();
+
+            $table->index(['resource_type', 'resource_id']);
+            $table->index('synced_at');
         });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('magicline_sync_logs');
     }
 };

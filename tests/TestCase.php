@@ -2,9 +2,9 @@
 
 namespace alexbabintsev\Magicline\Tests;
 
+use alexbabintsev\Magicline\MagiclineServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use alexbabintsev\Magicline\MagiclineServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -27,11 +27,11 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
-
-        /*
-         foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/database/migrations') as $migration) {
-            (include $migration->getRealPath())->up();
-         }
-         */
+        config()->set('magicline.api_key', 'test-api-key');
+        config()->set('magicline.base_url', 'https://test.magicline.com');
+        config()->set('magicline.timeout', 30);
+        config()->set('magicline.retry.times', 1);
+        config()->set('magicline.retry.sleep', 100);
+        config()->set('magicline.logging.enabled', false);
     }
 }

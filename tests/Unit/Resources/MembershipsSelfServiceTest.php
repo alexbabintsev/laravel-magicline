@@ -2,9 +2,10 @@
 
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\MembershipsSelfService;
+use Mockery;
 
 beforeEach(function () {
-    $this->client = $this->createMock(MagiclineClient::class);
+    $this->client = Mockery::mock(MagiclineClient::class);
     $this->resource = new MembershipsSelfService($this->client);
 });
 
@@ -22,10 +23,10 @@ test('get contract data', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('get')
+        ->shouldReceive('get')
+        ->once()
         ->with("/v1/memberships/{$customerId}/self-service/contract-data")
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->getContractData($customerId);
 
@@ -46,10 +47,10 @@ test('cancel ordinary contract', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('post')
+        ->shouldReceive('post')
+        ->once()
         ->with("/v1/memberships/{$customerId}/self-service/ordinary-contract-cancelation", $data)
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->cancelOrdinaryContract($customerId, $data);
 

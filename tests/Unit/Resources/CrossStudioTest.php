@@ -2,9 +2,10 @@
 
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\CrossStudio;
+use Mockery;
 
 beforeEach(function () {
-    $this->client = $this->createMock(MagiclineClient::class);
+    $this->client = Mockery::mock(MagiclineClient::class);
     $this->resource = new CrossStudio($this->client);
 });
 
@@ -22,10 +23,10 @@ test('get customers by', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('get')
+        ->shouldReceive('get')
+        ->once()
         ->with('/v1/cross-studio/customers/by', $criteria)
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->getCustomersBy($criteria);
 

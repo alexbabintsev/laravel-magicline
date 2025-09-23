@@ -2,9 +2,10 @@
 
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\TrialOffers;
+use Mockery;
 
 beforeEach(function () {
-    $this->client = $this->createMock(MagiclineClient::class);
+    $this->client = Mockery::mock(MagiclineClient::class);
     $this->resource = new TrialOffers($this->client);
 });
 
@@ -17,10 +18,10 @@ test('get bookable classes without pagination', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('get')
+        ->shouldReceive('get')
+        ->once()
         ->with('/v1/trial-offers/bookable-trial-offers/classes', [])
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->getBookableClasses();
 
@@ -35,10 +36,10 @@ test('get bookable classes with pagination', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('get')
+        ->shouldReceive('get')
+        ->once()
         ->with('/v1/trial-offers/bookable-trial-offers/classes', ['offset' => '10', 'sliceSize' => 25])
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->getBookableClasses(10, 25);
 
@@ -54,10 +55,10 @@ test('get bookable appointments without pagination', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('get')
+        ->shouldReceive('get')
+        ->once()
         ->with('/v1/trial-offers/bookable-trial-offers/appointments/bookable', [])
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->getBookableAppointments();
 
@@ -72,10 +73,10 @@ test('get bookable appointments with pagination', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('get')
+        ->shouldReceive('get')
+        ->once()
         ->with('/v1/trial-offers/bookable-trial-offers/appointments/bookable', ['offset' => '20', 'sliceSize' => 50])
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->getBookableAppointments(20, 50);
 

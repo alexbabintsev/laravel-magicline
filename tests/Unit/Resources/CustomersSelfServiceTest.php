@@ -2,9 +2,10 @@
 
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\CustomersSelfService;
+use Mockery;
 
 beforeEach(function () {
-    $this->client = $this->createMock(MagiclineClient::class);
+    $this->client = Mockery::mock(MagiclineClient::class);
     $this->resource = new CustomersSelfService($this->client);
 });
 
@@ -21,10 +22,10 @@ test('get contact data', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('get')
+        ->shouldReceive('get')
+        ->once()
         ->with("/v1/customers/{$customerId}/self-service/contact-data")
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->getContactData($customerId);
 
@@ -44,10 +45,10 @@ test('create contact data amendment', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('post')
+        ->shouldReceive('post')
+        ->once()
         ->with("/v1/customers/{$customerId}/self-service/contact-data", $data)
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->createContactDataAmendment($customerId, $data);
 

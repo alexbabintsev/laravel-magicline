@@ -2,9 +2,10 @@
 
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\CheckinVouchers;
+use Mockery;
 
 beforeEach(function () {
-    $this->client = $this->createMock(MagiclineClient::class);
+    $this->client = Mockery::mock(MagiclineClient::class);
     $this->resource = new CheckinVouchers($this->client);
 });
 
@@ -20,10 +21,10 @@ test('redeem voucher', function () {
     ];
 
     $this->client
-        ->expects($this->once())
-        ->method('post')
+        ->shouldReceive('post')
+        ->once()
         ->with('/v1/checkin-vouchers/redeem', $data)
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->redeem($data);
 

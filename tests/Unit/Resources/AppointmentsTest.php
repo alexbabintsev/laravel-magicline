@@ -2,9 +2,10 @@
 
 use alexbabintsev\Magicline\Http\MagiclineClient;
 use alexbabintsev\Magicline\Resources\Appointments;
+use Mockery;
 
 beforeEach(function () {
-    $this->client = $this->createMock(MagiclineClient::class);
+    $this->client = Mockery::mock(MagiclineClient::class);
     $this->resource = new Appointments($this->client);
 });
 
@@ -12,10 +13,10 @@ test('get bookable appointments', function () {
     $expectedResponse = ['data' => ['appointments']];
 
     $this->client
-        ->expects($this->once())
-        ->method('get')
+        ->shouldReceive('get')
+        ->once()
         ->with('/v1/appointments/bookable', [])
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->getBookable();
 
@@ -27,10 +28,10 @@ test('book appointment', function () {
     $expectedResponse = ['success' => true];
 
     $this->client
-        ->expects($this->once())
-        ->method('post')
+        ->shouldReceive('post')
+        ->once()
         ->with('/v1/appointments', $data)
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->book($data);
 
@@ -42,10 +43,10 @@ test('cancel appointment', function () {
     $expectedResponse = ['success' => true];
 
     $this->client
-        ->expects($this->once())
-        ->method('delete')
+        ->shouldReceive('delete')
+        ->once()
         ->with("/v1/appointments/{$appointmentId}")
-        ->willReturn($expectedResponse);
+        ->andReturn($expectedResponse);
 
     $result = $this->resource->cancel($appointmentId);
 

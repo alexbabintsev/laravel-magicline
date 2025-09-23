@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace alexbabintsev\Magicline\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class MagiclineCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-magicline';
 
     public $description = 'My command';
 

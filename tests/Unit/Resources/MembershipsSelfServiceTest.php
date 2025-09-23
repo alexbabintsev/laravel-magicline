@@ -1,7 +1,7 @@
 <?php
 
-use alexbabintsev\Magicline\Http\MagiclineClient;
-use alexbabintsev\Magicline\Resources\MembershipsSelfService;
+use AlexBabintsev\Magicline\Http\MagiclineClient;
+use AlexBabintsev\Magicline\Resources\MembershipsSelfService;
 use Mockery;
 
 beforeEach(function () {

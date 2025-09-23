@@ -1,6 +1,6 @@
 <?php
 
-namespace alexbabintsev\Magicline\Exceptions;
+namespace AlexBabintsev\Magicline\Exceptions;
 
 class MagiclineAuthenticationException extends MagiclineException
 {

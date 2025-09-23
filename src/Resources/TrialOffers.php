@@ -1,6 +1,6 @@
 <?php
 
-namespace alexbabintsev\Magicline\Resources;
+namespace AlexBabintsev\Magicline\Resources;
 
 class TrialOffers extends BaseResource
 {

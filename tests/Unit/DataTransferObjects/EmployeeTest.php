@@ -1,6 +1,6 @@
 <?php
 
-use alexbabintsev\Magicline\DataTransferObjects\Employee;
+use AlexBabintsev\Magicline\DataTransferObjects\Employee;
 
 test('employee can be created from array', function () {
     $data = [

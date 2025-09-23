@@ -1,8 +1,8 @@
 <?php
 
-namespace alexbabintsev\Magicline\Tests\Unit\DataTransferObjects;
+namespace AlexBabintsev\Magicline\Tests\Unit\DataTransferObjects;
 
-use alexbabintsev\Magicline\DataTransferObjects\Address;
+use AlexBabintsev\Magicline\DataTransferObjects\Address;
 
 test('address can be created from array', function () {
     $data = [

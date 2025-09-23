@@ -1,8 +1,8 @@
 <?php
 
-namespace alexbabintsev\Magicline\Commands;
+namespace AlexBabintsev\Magicline\Commands;
 
-use alexbabintsev\Magicline\Magicline;
+use AlexBabintsev\Magicline\Magicline;
 use Illuminate\Console\Command;
 
 class MagiclineCommand extends Command
@@ -27,13 +27,13 @@ class MagiclineCommand extends Command
                 default => $magicline->customers()->list(0, 5),
             };
 
-            $this->info('✅ API connection successful!');
+            $this->info('API connection successful!');
             $this->line('Response:');
             $this->line(json_encode($result, JSON_PRETTY_PRINT));
 
             return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('❌ API connection failed:');
+            $this->error('API connection failed:');
             $this->error($e->getMessage());
 
             return self::FAILURE;

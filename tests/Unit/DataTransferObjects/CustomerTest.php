@@ -1,7 +1,7 @@
 <?php
 
-use alexbabintsev\Magicline\DataTransferObjects\Address;
-use alexbabintsev\Magicline\DataTransferObjects\Customer;
+use AlexBabintsev\Magicline\DataTransferObjects\Address;
+use AlexBabintsev\Magicline\DataTransferObjects\Customer;
 
 test('customer can be created from array', function () {
     $data = [

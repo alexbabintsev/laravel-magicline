@@ -1,8 +1,8 @@
 <?php
 
-namespace alexbabintsev\Magicline\Tests;
+namespace AlexBabintsev\Magicline\Tests;
 
-use alexbabintsev\Magicline\MagiclineServiceProvider;
+use AlexBabintsev\Magicline\MagiclineServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -13,7 +13,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'alexbabintsev\\Magicline\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'AlexBabintsev\\Magicline\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 

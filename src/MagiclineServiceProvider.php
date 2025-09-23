@@ -1,9 +1,9 @@
 <?php
 
-namespace alexbabintsev\Magicline;
+namespace AlexBabintsev\Magicline;
 
-use alexbabintsev\Magicline\Commands\MagiclineCommand;
-use alexbabintsev\Magicline\Http\MagiclineClient;
+use AlexBabintsev\Magicline\Commands\MagiclineCommand;
+use AlexBabintsev\Magicline\Http\MagiclineClient;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Log;
 use Spatie\LaravelPackageTools\Package;

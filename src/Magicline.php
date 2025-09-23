@@ -1,24 +1,24 @@
 <?php
 
-namespace alexbabintsev\Magicline;
+namespace AlexBabintsev\Magicline;
 
-use alexbabintsev\Magicline\Http\MagiclineClient;
-use alexbabintsev\Magicline\Resources\Appointments;
-use alexbabintsev\Magicline\Resources\CheckinVouchers;
-use alexbabintsev\Magicline\Resources\Classes;
-use alexbabintsev\Magicline\Resources\CrossStudio;
-use alexbabintsev\Magicline\Resources\Customers;
-use alexbabintsev\Magicline\Resources\CustomersAccount;
-use alexbabintsev\Magicline\Resources\CustomersCommunication;
-use alexbabintsev\Magicline\Resources\CustomersSelfService;
-use alexbabintsev\Magicline\Resources\Devices;
-use alexbabintsev\Magicline\Resources\Employees;
-use alexbabintsev\Magicline\Resources\Finance;
-use alexbabintsev\Magicline\Resources\Memberships;
-use alexbabintsev\Magicline\Resources\MembershipsSelfService;
-use alexbabintsev\Magicline\Resources\Payments;
-use alexbabintsev\Magicline\Resources\Studios;
-use alexbabintsev\Magicline\Resources\TrialOffers;
+use AlexBabintsev\Magicline\Http\MagiclineClient;
+use AlexBabintsev\Magicline\Resources\Appointments;
+use AlexBabintsev\Magicline\Resources\CheckinVouchers;
+use AlexBabintsev\Magicline\Resources\Classes;
+use AlexBabintsev\Magicline\Resources\CrossStudio;
+use AlexBabintsev\Magicline\Resources\Customers;
+use AlexBabintsev\Magicline\Resources\CustomersAccount;
+use AlexBabintsev\Magicline\Resources\CustomersCommunication;
+use AlexBabintsev\Magicline\Resources\CustomersSelfService;
+use AlexBabintsev\Magicline\Resources\Devices;
+use AlexBabintsev\Magicline\Resources\Employees;
+use AlexBabintsev\Magicline\Resources\Finance;
+use AlexBabintsev\Magicline\Resources\Memberships;
+use AlexBabintsev\Magicline\Resources\MembershipsSelfService;
+use AlexBabintsev\Magicline\Resources\Payments;
+use AlexBabintsev\Magicline\Resources\Studios;
+use AlexBabintsev\Magicline\Resources\TrialOffers;
 
 class Magicline
 {

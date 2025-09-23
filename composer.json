@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "alexbabintsev\\Magicline\\": "src/",
-            "alexbabintsev\\Magicline\\Database\\Factories\\": "database/factories/"
+            "AlexBabintsev\\Magicline\\": "src/",
+            "AlexBabintsev\\Magicline\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "alexbabintsev\\Magicline\\Tests\\": "tests/",
+            "AlexBabintsev\\Magicline\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +63,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "alexbabintsev\\Magicline\\MagiclineServiceProvider"
+                "AlexBabintsev\\Magicline\\MagiclineServiceProvider"
             ],
             "aliases": {
-                "Magicline": "alexbabintsev\\Magicline\\Facades\\Magicline"
+                "Magicline": "AlexBabintsev\\Magicline\\Facades\\Magicline"
             }
         }
     },

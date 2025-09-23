@@ -1,8 +1,8 @@
 <?php
 
-namespace alexbabintsev\Magicline\Resources;
+namespace AlexBabintsev\Magicline\Resources;
 
-use alexbabintsev\Magicline\Http\MagiclineClient;
+use AlexBabintsev\Magicline\Http\MagiclineClient;
 
 abstract class BaseResource
 {

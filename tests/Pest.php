@@ -1,6 +1,6 @@
 <?php
 
-use alexbabintsev\Magicline\Tests\TestCase;
+use AlexBabintsev\Magicline\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);
 

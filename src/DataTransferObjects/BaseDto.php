@@ -1,6 +1,6 @@
 <?php
 
-namespace alexbabintsev\Magicline\DataTransferObjects;
+namespace AlexBabintsev\Magicline\DataTransferObjects;
 
 use ReflectionClass;
 use ReflectionProperty;

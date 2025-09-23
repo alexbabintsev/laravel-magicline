@@ -1,11 +1,11 @@
 <?php
 
-namespace alexbabintsev\Magicline\Http;
+namespace AlexBabintsev\Magicline\Http;
 
-use alexbabintsev\Magicline\Exceptions\MagiclineApiException;
-use alexbabintsev\Magicline\Exceptions\MagiclineAuthenticationException;
-use alexbabintsev\Magicline\Exceptions\MagiclineAuthorizationException;
-use alexbabintsev\Magicline\Exceptions\MagiclineValidationException;
+use AlexBabintsev\Magicline\Exceptions\MagiclineApiException;
+use AlexBabintsev\Magicline\Exceptions\MagiclineAuthenticationException;
+use AlexBabintsev\Magicline\Exceptions\MagiclineAuthorizationException;
+use AlexBabintsev\Magicline\Exceptions\MagiclineValidationException;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;

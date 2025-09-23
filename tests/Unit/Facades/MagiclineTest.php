@@ -3,7 +3,7 @@
 use AlexBabintsev\Magicline\Facades\Magicline;
 
 test('facade accessor returns correct class', function () {
-    $facade = new \AlexBabintsev\Magicline\Facades\Magicline();
+    $facade = new \AlexBabintsev\Magicline\Facades\Magicline;
     $reflection = new ReflectionMethod($facade, 'getFacadeAccessor');
     $reflection->setAccessible(true);
     $accessor = $reflection->invoke($facade);

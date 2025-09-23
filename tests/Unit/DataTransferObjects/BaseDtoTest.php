@@ -1,14 +1,18 @@
 <?php
 
-use AlexBabintsev\Magicline\DataTransferObjects\BaseDto;
 use AlexBabintsev\Magicline\DataTransferObjects\Address;
+use AlexBabintsev\Magicline\DataTransferObjects\BaseDto;
 
 class TestDto extends BaseDto
 {
     public string $name = '';
+
     public int $age = 0;
+
     public ?string $email = null;
+
     public ?Address $address = null;
+
     public array $tags = [];
 }
 

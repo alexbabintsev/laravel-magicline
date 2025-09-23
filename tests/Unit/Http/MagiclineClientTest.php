@@ -1,15 +1,9 @@
 <?php
 
 use AlexBabintsev\Magicline\Http\MagiclineClient;
-use AlexBabintsev\Magicline\Exceptions\MagiclineApiException;
-use AlexBabintsev\Magicline\Exceptions\MagiclineAuthenticationException;
-use AlexBabintsev\Magicline\Exceptions\MagiclineAuthorizationException;
-use AlexBabintsev\Magicline\Exceptions\MagiclineValidationException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
-use Illuminate\Http\Client\Response;
-use Illuminate\Http\Client\ConnectionException;
-use Illuminate\Http\Client\RequestException;
 
 test('should retry on connection exception', function () {
     $factory = Mockery::mock(Factory::class);

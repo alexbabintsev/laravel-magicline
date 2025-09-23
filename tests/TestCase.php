@@ -17,6 +17,11 @@ class TestCase extends Orchestra
         );
     }
 
+    public function ignorePackageDiscoveriesFrom()
+    {
+        return [];
+    }
+
     protected function getPackageProviders($app)
     {
         return [
@@ -33,5 +38,18 @@ class TestCase extends Orchestra
         config()->set('magicline.retry.times', 1);
         config()->set('magicline.retry.sleep', 100);
         config()->set('magicline.logging.enabled', false);
+
+        // Disable exception handling that can cause issues in CI
+        $app['config']->set('app.debug', true);
+        $app['config']->set('app.env', 'testing');
+    }
+
+    protected function resolveApplicationConfiguration($app)
+    {
+        parent::resolveApplicationConfiguration($app);
+
+        // Additional CI compatibility
+        $app['config']->set('session.driver', 'array');
+        $app['config']->set('cache.default', 'array');
     }
 }

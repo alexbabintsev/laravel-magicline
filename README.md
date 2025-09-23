@@ -9,6 +9,11 @@ Laravel Magicline provides a comprehensive, type-safe integration with the Magic
 
 Built with modern Laravel best practices, this package includes robust error handling, automatic retries, comprehensive logging, and detailed DTOs for type safety.
 
+## Requirements
+
+- PHP 8.1+
+- Laravel 10.x, 11.x or 12.x
+
 ## Installation
 
 You can install the package via composer:

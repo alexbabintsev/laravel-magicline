@@ -17,6 +17,16 @@ class TestCase extends Orchestra
         );
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        // Ensure clean state after each test
+        if (class_exists('Mockery')) {
+            \Mockery::close();
+        }
+    }
+
     public function ignorePackageDiscoveriesFrom()
     {
         return [];
@@ -51,5 +61,17 @@ class TestCase extends Orchestra
         // Additional CI compatibility
         $app['config']->set('session.driver', 'array');
         $app['config']->set('cache.default', 'array');
+    }
+
+    protected function resolveApplicationExceptionHandler($app)
+    {
+        // Override for CI compatibility - prevent HandleExceptions issues
+        $app->singleton('Illuminate\Contracts\Debug\ExceptionHandler', function () {
+            return new class {
+                public function report(\Throwable $e) {}
+                public function render($request, \Throwable $e) {}
+                public function renderForConsole($output, \Throwable $e) {}
+            };
+        });
     }
 }

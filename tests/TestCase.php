@@ -67,9 +67,12 @@ class TestCase extends Orchestra
     {
         // Override for CI compatibility - prevent HandleExceptions issues
         $app->singleton('Illuminate\Contracts\Debug\ExceptionHandler', function () {
-            return new class {
+            return new class
+            {
                 public function report(\Throwable $e) {}
+
                 public function render($request, \Throwable $e) {}
+
                 public function renderForConsole($output, \Throwable $e) {}
             };
         });

@@ -2,7 +2,6 @@
 
 use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\CheckinVouchers;
-use Mockery;
 
 beforeEach(function () {
     $this->client = Mockery::mock(MagiclineClient::class);

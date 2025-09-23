@@ -2,7 +2,6 @@
 
 use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Resources\Classes;
-use Mockery;
 
 beforeEach(function () {
     $this->client = Mockery::mock(MagiclineClient::class);

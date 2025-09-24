@@ -5,9 +5,12 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/alexbabintsev/laravel-magicline/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/alexbabintsev/laravel-magicline/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/alexbabintsev/laravel-magicline.svg?style=flat-square)](https://packagist.org/packages/alexbabintsev/laravel-magicline)
 
-Laravel Magicline provides a comprehensive, type-safe integration with the Magicline API for fitness club management systems. The package offers intuitive resource-based access to all Magicline endpoints including customer management, class scheduling, appointment booking, membership handling, and payment processing.
+Laravel Magicline provides a comprehensive, type-safe integration with **both** the Magicline API and Connect API for fitness club management systems. The package offers:
 
-Built with modern Laravel best practices, this package includes robust error handling, automatic retries, comprehensive logging, and detailed DTOs for type safety.
+- **Main API**: Studio management, customer data, employees, memberships, and internal operations
+- **Connect API**: Public-facing integrations for websites - contracts, trial sessions, leads, and customer-facing features
+
+Built with modern Laravel best practices, this package includes robust error handling, automatic retries, comprehensive logging, advanced timezone support, and detailed DTOs for type safety.
 
 ## Requirements
 
@@ -39,6 +42,7 @@ This is the contents of the published config file:
 
 ```php
 return [
+    // Main Magicline API (with API key)
     'api_key' => env('MAGICLINE_API_KEY'),
     'base_url' => env('MAGICLINE_BASE_URL', 'https://open-api-demo.open-api.magicline.com'),
     'timeout' => env('MAGICLINE_TIMEOUT', 30),
@@ -54,6 +58,21 @@ return [
     'logging' => [
         'enabled' => env('MAGICLINE_LOGGING_ENABLED', false),
         'level' => env('MAGICLINE_LOGGING_LEVEL', 'debug'),
+    ],
+
+    // Connect API (public API, no API key required)
+    'connect' => [
+        'base_url' => env('MAGICLINE_CONNECT_BASE_URL', 'https://connectdemo.api.magicline.com/connect/v1'),
+        'tenant' => env('MAGICLINE_CONNECT_TENANT'),
+        'timeout' => env('MAGICLINE_CONNECT_TIMEOUT', 30),
+        'retry' => [
+            'times' => env('MAGICLINE_CONNECT_RETRY_TIMES', 3),
+            'sleep' => env('MAGICLINE_CONNECT_RETRY_SLEEP', 100),
+        ],
+        'logging' => [
+            'enabled' => env('MAGICLINE_CONNECT_LOGGING_ENABLED', false),
+            'level' => env('MAGICLINE_CONNECT_LOGGING_LEVEL', 'debug'),
+        ],
     ],
 ];
 ```
@@ -75,10 +94,15 @@ MAGICLINE_BASE_URL=https://your-tenant.magicline.com
 
 ## Usage
 
-### Basic Usage
+The package provides two main APIs:
+
+- **Main API**: For studio management and internal operations (requires API key)
+- **Connect API**: For public websites and customer-facing integrations (no API key required)
+
+### Main API Usage
 
 ```php
-use alexbabintsev\Magicline\Facades\Magicline;
+use AlexBabintsev\Magicline\Facades\Magicline;
 
 // Get customers with pagination
 $customers = Magicline::customers()->list(offset: 0, sliceSize: 50);
@@ -88,6 +112,52 @@ $customer = Magicline::customers()->find(123);
 
 // Get customer account balances
 $balances = Magicline::customersAccount()->getBalances(123);
+```
+
+### Connect API Usage
+
+```php
+use AlexBabintsev\Magicline\Facades\MagiclineConnect;
+
+// Get list of studios
+$studios = MagiclineConnect::studios()->list();
+
+// Create a new lead
+$lead = MagiclineConnect::leads()->create([
+    'customer' => [
+        'firstName' => 'John',
+        'lastName' => 'Doe',
+        'email' => 'john@example.com',
+        'address' => [
+            'street' => 'Main Street',
+            'houseNumber' => '123',
+            'zip' => '12345',
+            'city' => 'Berlin',
+            'country' => 'DE'
+        ]
+    ],
+    'studioId' => 123,
+    'sourceCampaignId' => 'web-form-2024'
+]);
+
+// Get available trial session slots
+$sessions = MagiclineConnect::trialSessions()->getAvailableSlots([
+    'studioId' => 123,
+    'startDate' => '2024-02-01',
+    'endDate' => '2024-02-07'
+]);
+
+// Book a trial session
+$booking = MagiclineConnect::trialSessions()->book([
+    'studioId' => 123,
+    'startDateTime' => '2024-02-03T10:00:00.000+01:00[Europe/Berlin]',
+    'leadCustomer' => [
+        'firstName' => 'Jane',
+        'lastName' => 'Smith',
+        'email' => 'jane@example.com',
+        'phone' => '+49 123 456789'
+    ]
+]);
 ```
 
 ### Working with Classes
@@ -352,6 +422,8 @@ php artisan magicline:test --endpoint=studios
 
 ## Available Resources
 
+### Main API Resources
+
 - **Appointments**: Book and manage personal training appointments
 - **Classes**: List, book and cancel group fitness classes
 - **Customers**: Retrieve customer information and manage profiles
@@ -368,6 +440,85 @@ php artisan magicline:test --endpoint=studios
 - **Trial Offers**: Manage trial memberships and bookings
 - **Checkin Vouchers**: Redeem gym entry vouchers
 - **Cross Studio**: Cross-location customer operations
+
+### Connect API Resources (Public API)
+
+- **Studios**: List studios and communication settings for public websites
+- **Campaigns**: Marketing campaigns for lead tracking
+- **Referrals**: Referral program management
+- **Leads**: Lead generation and identity token handling
+- **Trial Sessions**: Public trial session booking with timezone support
+- **Rate Bundles**: Pricing plans with terms and modules for contracts
+- **Contracts**: Contract creation, preview, and cancellation
+- **Credit Card Tokenization**: Adyen integration for secure payment processing
+- **Image Upload**: Member picture upload via pre-signed URLs
+- **Validation**: Form validation and document verification
+- **Address Data**: Geolocation and address validation services
+
+## Connect API Features
+
+### Timezone Support
+
+The Connect API includes advanced timezone handling for trial sessions:
+
+```php
+// Supports both old UTC format and new timezone-aware format
+$slots = MagiclineConnect::trialSessions()->getAvailableSlots([
+    'studioId' => 123,
+    'startDate' => '2024-02-01',
+    'endDate' => '2024-02-07'
+]);
+
+// Automatically handles timezone conversions for booking
+MagiclineConnect::trialSessions()->book([
+    'startDateTime' => '2024-02-03T10:00:00.000+01:00[Europe/Berlin]', // New format
+    // or
+    'startDateTime' => '2024-02-03T09:00:00.000Z', // Old UTC format (also supported)
+]);
+```
+
+### Localization Support
+
+Smart locale resolution with fallback chain:
+
+```php
+$customer = [
+    'locale' => 'de_CH',      // Highest priority
+    'language' => 'fr',       // Medium priority (overridden by locale)
+    'countryCode' => 'CH',    // Fallback (not used when locale is present)
+];
+
+// Automatically resolves to: language='de', locale='de_CH'
+```
+
+### Contract Management
+
+Full contract lifecycle with signatures and payments:
+
+```php
+// Preview contract with voucher
+$preview = MagiclineConnect::contracts()->preview([
+    'studioId' => 123,
+    'rateBundleTermId' => 456,
+    'customer' => ['dateOfBirth' => '1990-01-01'],
+    'voucherCode' => 'DISCOUNT20'
+]);
+
+// Create contract with digital signatures
+$contract = MagiclineConnect::contracts()->create([
+    'studioId' => 123,
+    'rateBundleTermId' => 456,
+    'paymentChoice' => 'CREDIT_CARD',
+    'creditCard' => ['tokenizationReference' => $tokenRef],
+    'signatures' => [
+        'contractSignature' => $svgBase64,
+        'sepaSignature' => $sepaSignature,
+        'textBlockSignatures' => [
+            ['textBlockId' => 789, 'signature' => $textSignature]
+        ]
+    ]
+]);
+```
 
 ## Testing
 

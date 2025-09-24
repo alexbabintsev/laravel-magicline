@@ -2,6 +2,38 @@
 
 All notable changes to `laravel-magicline` will be documented in this file.
 
+## [1.1.0] - 2025-09-24
+
+### Added
+- **Connect API Integration**: Complete support for Magicline Connect API (public API for websites)
+- **Connect API Resources**:
+  - **Studios**: List studios and communication settings for public use
+  - **Campaigns**: Marketing campaign management for lead tracking
+  - **Referrals**: Referral program support for trial sessions
+  - **Leads**: Lead generation with identity token support for known customers
+  - **Trial Sessions**: Public trial session booking with advanced timezone support
+  - **Rate Bundles**: Pricing plans with terms and modules for contract creation
+  - **Contracts**: Full contract lifecycle (preview, creation, cancellation)
+  - **Credit Card Tokenization**: Adyen WebComponent integration for secure payments
+  - **Image Upload**: Member picture upload via pre-signed URLs
+  - **Validation**: Form validation and document verification (including Turkish TC Kimlik)
+  - **Address Data**: Geolocation services and address validation
+
+### Features
+- **Advanced Timezone Support**: Automatic handling of both old UTC format (`2021-08-23T09:00:00.000Z`) and new timezone format (`2021-08-23T11:00:00.000+02:00[Europe/Berlin]`)
+- **Smart Localization**: Intelligent locale resolution with fallback chain (locale → language → country)
+- **Digital Signatures**: SVG signature processing in Base64 format for contracts
+- **Document Validation**: Support for multiple document types (ID_CARD, PASSPORT, etc.) with country-specific validation
+- **Identity Token Handling**: UUID-based customer recognition for returning users
+- **MagiclineConnect Facade**: Easy access to Connect API resources
+- **Comprehensive Testing**: 36+ new tests for Connect API functionality
+
+### Technical
+- **No API Key Required**: Connect API is public-facing and doesn't require authentication
+- **Backward Compatibility**: Maintains full compatibility with existing Main API
+- **Error Handling**: Connect-specific exception handling with detailed error information
+- **Configuration**: Separate configuration section for Connect API settings
+
 ## [1.0.0] - 2025-09-24
 
 ### Added

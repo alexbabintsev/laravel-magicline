@@ -3,10 +3,10 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Magicline API Configuration
+    | Magicline Main API Configuration
     |--------------------------------------------------------------------------
     |
-    | Configuration for the Magicline API integration. Set your API key
+    | Configuration for the main Magicline API integration. Set your API key
     | and base URL for the Magicline service.
     |
     */
@@ -58,5 +58,29 @@ return [
     'logging' => [
         'enabled' => env('MAGICLINE_LOGGING_ENABLED', false),
         'level' => env('MAGICLINE_LOGGING_LEVEL', 'debug'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Connect API Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the Magicline Connect API - public API for websites
+    | and customer-facing integrations. No API key required.
+    |
+    */
+
+    'connect' => [
+        'base_url' => env('MAGICLINE_CONNECT_BASE_URL', 'https://connectdemo.api.magicline.com/connect/v1'),
+        'tenant' => env('MAGICLINE_CONNECT_TENANT'),
+        'timeout' => env('MAGICLINE_CONNECT_TIMEOUT', 30),
+        'retry' => [
+            'times' => env('MAGICLINE_CONNECT_RETRY_TIMES', 3),
+            'sleep' => env('MAGICLINE_CONNECT_RETRY_SLEEP', 100),
+        ],
+        'logging' => [
+            'enabled' => env('MAGICLINE_CONNECT_LOGGING_ENABLED', false),
+            'level' => env('MAGICLINE_CONNECT_LOGGING_LEVEL', 'debug'),
+        ],
     ],
 ];

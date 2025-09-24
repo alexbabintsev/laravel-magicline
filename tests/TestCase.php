@@ -49,8 +49,7 @@ class TestCase extends Orchestra
         config()->set('magicline.retry.sleep', 100);
         config()->set('magicline.logging.enabled', false);
 
-        // Disable exception handling that can cause issues in CI
-        $app['config']->set('app.debug', true);
+        // Set testing environment
         $app['config']->set('app.env', 'testing');
     }
 
@@ -63,15 +62,10 @@ class TestCase extends Orchestra
         $app['config']->set('cache.default', 'array');
     }
 
-    protected function resolveApplicationExceptionHandler($app)
+    protected function defineEnvironment($app)
     {
-        // Override for CI compatibility - prevent HandleExceptions issues
-        $app->singleton('Illuminate\Contracts\Debug\ExceptionHandler', function () {
-            return new class {
-                public function report(\Throwable $e) {}
-                public function render($request, \Throwable $e) {}
-                public function renderForConsole($output, \Throwable $e) {}
-            };
-        });
+        // Fix for HandleExceptions issue in newer Laravel/PHPUnit versions
+        // See: https://github.com/laravel/framework/issues/56627
+        $app['config']->set('app.debug', false);
     }
 }

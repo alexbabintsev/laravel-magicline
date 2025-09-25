@@ -8,7 +8,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('magicline_sync_logs', function (Blueprint $table) {
+        $tableName = config('magicline.logging.database.table', 'magicline_logs');
+
+        Schema::create($tableName, function (Blueprint $table) {
             $table->id();
             $table->string('resource_type');
             $table->string('resource_id')->nullable();
@@ -27,6 +29,8 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('magicline_sync_logs');
+        $tableName = config('magicline.logging.database.table', 'magicline_logs');
+
+        Schema::dropIfExists($tableName);
     }
 };

@@ -19,7 +19,7 @@ class MagiclineServiceProvider extends PackageServiceProvider
             ->name('laravel-magicline')
             ->hasConfigFile()
             ->hasViews()
-            ->hasMigration('create_magicline_table')
+            ->hasMigration('create_magicline_logs_table')
             ->hasCommand(MagiclineCommand::class);
     }
 

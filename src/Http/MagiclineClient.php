@@ -6,6 +6,7 @@ use AlexBabintsev\Magicline\Exceptions\MagiclineApiException;
 use AlexBabintsev\Magicline\Exceptions\MagiclineAuthenticationException;
 use AlexBabintsev\Magicline\Exceptions\MagiclineAuthorizationException;
 use AlexBabintsev\Magicline\Exceptions\MagiclineValidationException;
+use AlexBabintsev\Magicline\Traits\LogsApiOperations;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
@@ -14,6 +15,8 @@ use Psr\Log\LoggerInterface;
 
 class MagiclineClient
 {
+    use LogsApiOperations;
+
     private PendingRequest $httpClient;
 
     public function __construct(
@@ -74,6 +77,28 @@ class MagiclineClient
     }
 
     private function makeRequest(string $method, string $uri, array $query = [], array $data = []): array
+    {
+        return $this->executeWithDatabaseLogging($method, $uri, $query, $data);
+    }
+
+    private function executeWithDatabaseLogging(string $method, string $uri, array $query = [], array $data = []): array
+    {
+        // Extract resource info from URI for logging
+        $resourceInfo = $this->parseResourceFromUri($uri);
+        $requestData = $this->sanitizeRequestData(array_merge($query, $data));
+
+        return $this->executeWithLogging(
+            $resourceInfo['type'],
+            strtolower($method),
+            function () use ($method, $uri, $query, $data) {
+                return $this->makeHttpRequest($method, $uri, $query, $data);
+            },
+            $resourceInfo['id'],
+            $requestData
+        );
+    }
+
+    private function makeHttpRequest(string $method, string $uri, array $query = [], array $data = []): array
     {
         $this->logRequest($method, $uri, $query, $data);
 
@@ -184,5 +209,72 @@ class MagiclineClient
         $logLevel = $level ?? $this->logLevel;
 
         $logger->{$logLevel}($message, $context);
+    }
+
+    /**
+     * Parse resource type and ID from URI
+     */
+    private function parseResourceFromUri(string $uri): array
+    {
+        // Remove leading slash and split by segments
+        $segments = explode('/', trim($uri, '/'));
+
+        // Default values
+        $type = 'unknown';
+        $id = null;
+
+        if (empty($segments)) {
+            return ['type' => $type, 'id' => $id];
+        }
+
+        // Map common URI patterns to resource types
+        $resourceMap = [
+            'customers' => 'customers',
+            'appointments' => 'appointments',
+            'classes' => 'classes',
+            'employees' => 'employees',
+            'devices' => 'devices',
+            'memberships' => 'memberships',
+            'studios' => 'studios',
+            'finance' => 'finance',
+            'payments' => 'payments',
+            'checkin-vouchers' => 'checkin_vouchers',
+            'trial-offers' => 'trial_offers',
+        ];
+
+        // Find resource type
+        foreach ($segments as $segment) {
+            if (isset($resourceMap[$segment])) {
+                $type = $resourceMap[$segment];
+                break;
+            }
+        }
+
+        // Try to extract ID from URI
+        // Look for numeric segments that might be IDs
+        foreach ($segments as $segment) {
+            if (is_numeric($segment) || $this->isUuid($segment)) {
+                $id = $segment;
+                break;
+            }
+        }
+
+        return ['type' => $type, 'id' => $id];
+    }
+
+    /**
+     * Check if string is a UUID
+     */
+    private function isUuid(string $string): bool
+    {
+        return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $string) === 1;
+    }
+
+    /**
+     * Check if database logging is enabled
+     */
+    protected function isDatabaseLoggingEnabled(): bool
+    {
+        return config('magicline.logging.database.enabled', false);
     }
 }

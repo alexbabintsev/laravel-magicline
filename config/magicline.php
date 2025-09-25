@@ -58,6 +58,12 @@ return [
     'logging' => [
         'enabled' => env('MAGICLINE_LOGGING_ENABLED', false),
         'level' => env('MAGICLINE_LOGGING_LEVEL', 'debug'),
+        'database' => [
+            'enabled' => env('MAGICLINE_DATABASE_LOGGING_ENABLED', false),
+            // Name of the database table for storing API operation logs
+            // Used by both the migration and the MagiclineLog model
+            'table' => env('MAGICLINE_DATABASE_LOGGING_TABLE', 'magicline_logs'),
+        ],
     ],
 
     /*
@@ -81,6 +87,9 @@ return [
         'logging' => [
             'enabled' => env('MAGICLINE_CONNECT_LOGGING_ENABLED', false),
             'level' => env('MAGICLINE_CONNECT_LOGGING_LEVEL', 'debug'),
+            'database' => [
+                'enabled' => env('MAGICLINE_CONNECT_DATABASE_LOGGING_ENABLED', false),
+            ],
         ],
     ],
 
@@ -125,6 +134,9 @@ return [
         'logging' => [
             'enabled' => env('MAGICLINE_DEVICE_LOGGING_ENABLED', true),
             'level' => env('MAGICLINE_DEVICE_LOGGING_LEVEL', 'info'),
+            'database' => [
+                'enabled' => env('MAGICLINE_DEVICE_DATABASE_LOGGING_ENABLED', false),
+            ],
         ],
     ],
 ];

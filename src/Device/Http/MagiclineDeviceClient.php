@@ -4,6 +4,7 @@ namespace AlexBabintsev\Magicline\Device\Http;
 
 use AlexBabintsev\Magicline\Exceptions\MagiclineApiException;
 use AlexBabintsev\Magicline\Exceptions\MagiclineAuthenticationException;
+use AlexBabintsev\Magicline\Traits\LogsApiOperations;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +12,8 @@ use Psr\Log\LoggerInterface;
 
 class MagiclineDeviceClient
 {
+    use LogsApiOperations;
+
     public function __construct(
         private readonly Factory $httpFactory,
         private readonly string $baseUrl,
@@ -28,7 +31,7 @@ class MagiclineDeviceClient
      */
     public function get(string $endpoint, array $query = [], array $headers = []): array
     {
-        return $this->makeRequest('GET', $endpoint, [], $query, $headers);
+        return $this->executeWithDatabaseLogging('GET', $endpoint, $query, $headers);
     }
 
     /**
@@ -36,7 +39,23 @@ class MagiclineDeviceClient
      */
     public function post(string $endpoint, array $data = [], array $headers = []): array
     {
-        return $this->makeRequest('POST', $endpoint, $data, [], $headers);
+        return $this->executeWithDatabaseLogging('POST', $endpoint, $data, $headers);
+    }
+
+    private function executeWithDatabaseLogging(string $method, string $endpoint, array $data = [], array $headers = []): array
+    {
+        $resourceInfo = $this->parseDeviceResourceFromUri($endpoint);
+        $requestData = $this->sanitizeRequestData($data);
+
+        return $this->executeWithLogging(
+            "device_{$resourceInfo['type']}",
+            strtolower($method),
+            function () use ($method, $endpoint, $data, $headers) {
+                return $this->makeRequest($method, $endpoint, $data, [], $headers);
+            },
+            $resourceInfo['id'],
+            $requestData
+        );
     }
 
     /**
@@ -157,5 +176,56 @@ class MagiclineDeviceClient
     public function isLoggingEnabled(): bool
     {
         return $this->loggingEnabled;
+    }
+
+    /**
+     * Parse Device API resource from URI
+     */
+    private function parseDeviceResourceFromUri(string $uri): array
+    {
+        $segments = explode('/', trim($uri, '/'));
+
+        $deviceResourceMap = [
+            'access' => 'access',
+            'card-reader' => 'access',
+            'vending' => 'vending',
+            'time' => 'time',
+        ];
+
+        $type = 'unknown';
+        $id = null;
+
+        foreach ($segments as $segment) {
+            if (isset($deviceResourceMap[$segment])) {
+                $type = $deviceResourceMap[$segment];
+                break;
+            }
+        }
+
+        // Extract ID if present
+        foreach ($segments as $segment) {
+            if (is_numeric($segment) || $this->isUuid($segment)) {
+                $id = $segment;
+                break;
+            }
+        }
+
+        return ['type' => $type, 'id' => $id];
+    }
+
+    /**
+     * Check if database logging is enabled for Device API
+     */
+    protected function isDatabaseLoggingEnabled(): bool
+    {
+        return config('magicline.device.logging.database.enabled', false);
+    }
+
+    /**
+     * Check if string is a UUID
+     */
+    private function isUuid(string $string): bool
+    {
+        return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $string) === 1;
     }
 }

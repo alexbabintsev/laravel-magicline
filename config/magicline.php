@@ -83,4 +83,23 @@ return [
             'level' => env('MAGICLINE_CONNECT_LOGGING_LEVEL', 'debug'),
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Webhooks Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for incoming webhook requests from Magicline.
+    | Webhooks require X-API-KEY authentication.
+    |
+    */
+
+    'webhooks' => [
+        'api_key' => env('MAGICLINE_WEBHOOK_API_KEY'),
+        'endpoint' => env('MAGICLINE_WEBHOOK_ENDPOINT', '/magicline/webhook'),
+        'logging' => [
+            'enabled' => env('MAGICLINE_WEBHOOK_LOGGING_ENABLED', true),
+            'level' => env('MAGICLINE_WEBHOOK_LOGGING_LEVEL', 'info'),
+        ],
+    ],
 ];

@@ -5,10 +5,12 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/alexbabintsev/laravel-magicline/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/alexbabintsev/laravel-magicline/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/alexbabintsev/laravel-magicline.svg?style=flat-square)](https://packagist.org/packages/alexbabintsev/laravel-magicline)
 
-Laravel Magicline provides a comprehensive, type-safe integration with **both** the Magicline API and Connect API for fitness club management systems. The package offers:
+Laravel Magicline provides a comprehensive, type-safe integration with **all three** Magicline APIs for fitness club management systems. The package offers:
 
 - **Main API**: Studio management, customer data, employees, memberships, and internal operations
 - **Connect API**: Public-facing integrations for websites - contracts, trial sessions, leads, and customer-facing features
+- **Device API**: Hardware device integrations - card readers, vending machines, and time tracking devices
+- **Webhooks**: Real-time event processing with automatic Laravel event dispatching
 
 Built with modern Laravel best practices, this package includes robust error handling, automatic retries, comprehensive logging, advanced timezone support, and detailed DTOs for type safety.
 
@@ -74,6 +76,31 @@ return [
             'level' => env('MAGICLINE_CONNECT_LOGGING_LEVEL', 'debug'),
         ],
     ],
+
+    // Webhooks (incoming events from Magicline)
+    'webhooks' => [
+        'api_key' => env('MAGICLINE_WEBHOOK_API_KEY'),
+        'endpoint' => env('MAGICLINE_WEBHOOK_ENDPOINT', '/magicline/webhook'),
+        'logging' => [
+            'enabled' => env('MAGICLINE_WEBHOOK_LOGGING_ENABLED', true),
+            'level' => env('MAGICLINE_WEBHOOK_LOGGING_LEVEL', 'info'),
+        ],
+    ],
+
+    // Device API (for hardware integrations)
+    'device' => [
+        'base_url' => env('MAGICLINE_DEVICE_BASE_URL', 'https://open-api-demo.devices.magicline.com'),
+        'bearer_token' => env('MAGICLINE_DEVICE_BEARER_TOKEN'),
+        'timeout' => env('MAGICLINE_DEVICE_TIMEOUT', 30),
+        'retry' => [
+            'times' => env('MAGICLINE_DEVICE_RETRY_TIMES', 3),
+            'delay' => env('MAGICLINE_DEVICE_RETRY_DELAY', 1000),
+        ],
+        'logging' => [
+            'enabled' => env('MAGICLINE_DEVICE_LOGGING_ENABLED', true),
+            'level' => env('MAGICLINE_DEVICE_LOGGING_LEVEL', 'info'),
+        ],
+    ],
 ];
 ```
 
@@ -88,16 +115,28 @@ php artisan vendor:publish --tag="magicline-views"
 Set your Magicline API credentials in your `.env` file:
 
 ```env
+# Main API
 MAGICLINE_API_KEY=your-api-key-here
 MAGICLINE_BASE_URL=https://your-tenant.magicline.com
+
+# Connect API (public API)
+MAGICLINE_CONNECT_TENANT=your-tenant-name
+
+# Device API (hardware integrations)
+MAGICLINE_DEVICE_BEARER_TOKEN=your-device-bearer-token
+
+# Webhooks
+MAGICLINE_WEBHOOK_API_KEY=your-webhook-api-key
 ```
 
 ## Usage
 
-The package provides two main APIs:
+The package provides three main APIs plus webhook handling:
 
 - **Main API**: For studio management and internal operations (requires API key)
 - **Connect API**: For public websites and customer-facing integrations (no API key required)
+- **Device API**: For hardware device integrations like card readers and vending machines (requires Bearer token)
+- **Webhooks**: For receiving real-time events from Magicline (requires API key authentication)
 
 ### Main API Usage
 
@@ -158,6 +197,107 @@ $booking = MagiclineConnect::trialSessions()->book([
         'phone' => '+49 123 456789'
     ]
 ]);
+```
+
+### Device API Usage
+
+The Device API allows integration with hardware devices like card readers, vending machines, and time tracking systems.
+
+```php
+use AlexBabintsev\Magicline\Device\MagiclineDevice;
+use AlexBabintsev\Magicline\Device\DTOs\Identification\CardNumberIdentification;
+use AlexBabintsev\Magicline\Device\DTOs\Identification\QrCodeIdentification;
+use AlexBabintsev\Magicline\Device\DTOs\Identification\WalletPassIdentification;
+
+// Initialize Device API client
+$deviceApi = app(MagiclineDevice::class);
+
+// Card Reader Access Control
+$cardId = CardNumberIdentification::decimal('1234567890');
+$accessRequest = CardReaderIdentificationRequest::create($cardId);
+
+// Check access (dry run)
+$dryRunRequest = CardReaderIdentificationRequest::dryRun($cardId);
+$response = $deviceApi->access()->cardReaderIdentification($dryRunRequest);
+
+if ($response->isSuccess()) {
+    // Grant access
+    $actualRequest = CardReaderIdentificationRequest::create($cardId, true);
+    $deviceApi->access()->cardReaderIdentification($actualRequest);
+}
+
+// Vending Machine Integration
+$qrId = QrCodeIdentification::create('{"uuid":"123e4567-e89b-12d3-a456-426614174000"}');
+
+// Check customer authorization
+$vendingIdentRequest = VendingIdentificationRequest::createWithGeneratedId($qrId);
+$identResponse = $deviceApi->vending()->identification($vendingIdentRequest);
+
+if ($identResponse->isAuthorized() && $identResponse->hasSufficientCredit(2.50)) {
+    // Process sale
+    $saleRequest = VendingSaleRequest::create(
+        $qrId,
+        $identResponse->getTransactionId(),
+        'shelf-A1',
+        2.50
+    );
+
+    $saleResponse = $deviceApi->vending()->sale($saleRequest);
+
+    if ($saleResponse->isSuccess()) {
+        echo "Sale completed: {$saleResponse->getText()}";
+    }
+}
+
+// Time Tracking System
+$walletPassId = WalletPassIdentification::create('123e4567-e89b-12d3-a456-426614174000');
+$timeRequest = TimeIdentificationRequest::create($walletPassId);
+
+$timeResponse = $deviceApi->time()->identification($timeRequest);
+if ($timeResponse->isSuccess()) {
+    echo "Time tracking recorded: {$timeResponse->getText()}";
+}
+```
+
+### Webhook Handling
+
+The package provides automatic webhook handling with Laravel event dispatching:
+
+```php
+// Add to routes/web.php or routes/api.php
+Route::post('/magicline/webhook', [WebhookController::class, 'handle'])
+    ->middleware(['api', \AlexBabintsev\Magicline\Webhooks\Middleware\VerifyWebhookSignature::class]);
+
+// Listen to webhook events in your EventServiceProvider
+protected $listen = [
+    \AlexBabintsev\Magicline\Webhooks\Events\CustomerCreated::class => [
+        YourCustomerCreatedListener::class,
+    ],
+    \AlexBabintsev\Magicline\Webhooks\Events\ContractUpdated::class => [
+        YourContractUpdatedListener::class,
+    ],
+    \AlexBabintsev\Magicline\Webhooks\Events\AppointmentBookingCreated::class => [
+        YourBookingListener::class,
+    ],
+];
+
+// Handle webhook events in listeners
+class YourCustomerCreatedListener
+{
+    public function handle(CustomerCreated $event): void
+    {
+        $webhookEvent = $event->webhookEvent;
+
+        logger()->info('New customer created', [
+            'customer_id' => $webhookEvent->entityId,
+            'event_type' => $webhookEvent->eventType,
+            'timestamp' => $webhookEvent->eventDateTime,
+        ]);
+
+        // Process the customer creation asynchronously
+        ProcessNewCustomer::dispatch($webhookEvent->entityId);
+    }
+}
 ```
 
 ### Working with Classes
@@ -455,6 +595,333 @@ php artisan magicline:test --endpoint=studios
 - **Validation**: Form validation and document verification
 - **Address Data**: Geolocation and address validation services
 
+### Device API Resources (Hardware Integration)
+
+- **Access Resource**: Card reader identification and access control
+- **Vending Resource**: Vending machine customer identification and sales processing
+- **Time Resource**: Time tracking device identification and logging
+
+#### Supported Identification Types:
+- **Card Numbers**: Support for DECIMAL, HEX_MSB, and HEX_LSB formats
+- **QR Codes**: JSON and string data support with customer UUID extraction
+- **Barcodes**: Standard barcode identification
+- **PINs**: Numeric PIN-based identification
+- **Wallet Pass**: Apple Wallet pass UUID validation and version detection
+
+### Webhook Event Types
+
+The package supports all 28 official Magicline webhook event types:
+
+- **Customer Events**: `CUSTOMER_CREATED`, `CUSTOMER_UPDATED`, `CUSTOMER_DELETED`
+- **Contract Events**: `CONTRACT_CREATED`, `CONTRACT_UPDATED`, `CONTRACT_DELETED`
+- **Appointment Events**: `APPOINTMENT_BOOKING_CREATED`, `APPOINTMENT_BOOKING_UPDATED`, `APPOINTMENT_BOOKING_DELETED`
+- **Class Events**: `CLASS_BOOKING_CREATED`, `CLASS_BOOKING_UPDATED`, `CLASS_BOOKING_DELETED`
+- **Payment Events**: `PAYMENT_CREATED`, `PAYMENT_UPDATED`, `PAYMENT_FAILED`
+- **Trial Events**: `TRIAL_SESSION_CREATED`, `TRIAL_SESSION_UPDATED`, `TRIAL_SESSION_CANCELLED`
+- **Membership Events**: `MEMBERSHIP_CREATED`, `MEMBERSHIP_UPDATED`, `MEMBERSHIP_CANCELLED`
+- **Studio Events**: `STUDIO_UPDATED`
+- **Employee Events**: `EMPLOYEE_CREATED`, `EMPLOYEE_UPDATED`, `EMPLOYEE_DELETED`
+- **Device Events**: `DEVICE_ACTIVATED`, `DEVICE_DEACTIVATED`
+- **Check-in Events**: `CHECKIN_RECORDED`
+- **System Events**: `SYSTEM_MAINTENANCE_SCHEDULED`
+
+## Device API Features
+
+### Authentication and Token Management
+
+The Device API uses persistent token authentication with separate tokens for each device:
+
+```php
+// Tokens are generated automatically when devices are created in studio
+// Listen for DEVICE_CREATED webhook to get device information
+protected $listen = [
+    \AlexBabintsev\Magicline\Webhooks\Events\DeviceActivated::class => [
+        App\Listeners\HandleNewDevice::class,
+    ],
+];
+
+// After receiving device webhook, activate the device to get token
+$deviceActivation = Magicline::devices()->activate('device-id-from-webhook');
+$bearerToken = $deviceActivation['token'];
+
+// Configure Device API with received token
+config(['magicline.device.bearer_token' => $bearerToken]);
+```
+
+### Hardware Integration Support
+
+The Device API supports three main categories of hardware devices with different operational patterns:
+
+```php
+// Access Control Devices (Card Readers)
+$cardId = CardNumberIdentification::hexMsb('1A2B3C4D');
+$accessRequest = CardReaderIdentificationRequest::create($cardId);
+$response = $deviceApi->access()->cardReaderIdentification($accessRequest);
+
+// Vending Machines
+$qrId = QrCodeIdentification::create('customer-qr-data');
+$vendingRequest = VendingIdentificationRequest::create($qrId, 'txn-' . uniqid());
+$vendingResponse = $deviceApi->vending()->identification($vendingRequest);
+
+// Time Tracking Devices
+$walletId = WalletPassIdentification::create('123e4567-e89b-12d3-a456-426614174000');
+$timeRequest = TimeIdentificationRequest::create($walletId);
+$timeResponse = $deviceApi->time()->identification($timeRequest);
+```
+
+### Access Control Devices
+
+Access devices use a two-phase approach: **Checks** and **Actions**.
+
+- **Checks**: Always executed to verify customer permissions (studio access, parking, rooms, equipment)
+- **Actions**: Only executed when `shouldExecuteAction=true` (check-in, parking slot updates, contingent booking)
+
+```php
+// Phase 1: Perform checks only (dry-run)
+$checkRequest = CardReaderIdentificationRequest::dryRun($cardId);
+$checkResult = $deviceApi->access()->cardReaderIdentification($checkRequest);
+
+if ($checkResult->isSuccess()) {
+    // Phase 2: Execute actual actions
+    $actionRequest = CardReaderIdentificationRequest::create($cardId, true);
+    $deviceApi->access()->cardReaderIdentification($actionRequest);
+}
+```
+
+### Vending Machine Concurrency Control
+
+Vending devices require special concurrency control to prevent abuse through transaction locking:
+
+```php
+// Generate unique transaction ID (UUID format required)
+$transactionId = VendingIdentificationRequest::generateTransactionId();
+
+// Step 1: Customer identification (locks customer for this transaction)
+$identRequest = VendingIdentificationRequest::create($qrId, $transactionId);
+$identResponse = $deviceApi->vending()->identification($identRequest);
+
+if ($identResponse->isAuthorized() && $identResponse->hasSufficientCredit(2.50)) {
+    // Step 2: Validate sale (dry-run)
+    $saleValidation = VendingSaleRequest::create($qrId, $transactionId, 'shelf-A1', 2.50, false);
+    $validationResult = $deviceApi->vending()->sale($saleValidation);
+
+    if ($validationResult->isSuccess()) {
+        // Step 3: Execute actual sale (releases lock)
+        $actualSale = VendingSaleRequest::create($qrId, $transactionId, 'shelf-A1', 2.50, true);
+        $saleResult = $deviceApi->vending()->sale($actualSale);
+    }
+}
+```
+
+#### Vending Timeouts
+
+Two configurable timeouts prevent abandoned transactions:
+
+```php
+// Configure timeouts in studio settings:
+
+// 1. Idle Timeout (default: 15 seconds)
+// - Starts after customer identification
+// - Cancels if customer doesn't select product
+// - Releases customer lock automatically
+
+// 2. Product Draw Timeout
+// - Starts after product selection (shouldExecuteAction=false)
+// - Cancels if customer doesn't complete purchase
+// - Allows customer to use other devices
+
+// Important: Coordinate timeout values with studio operators
+```
+
+### Time Tracking Devices
+
+Time devices follow identification → usage pattern:
+
+```php
+// Step 1: Customer identification
+$timeIdent = TimeIdentificationRequest::create($walletPassId);
+$identResult = $deviceApi->time()->identification($timeIdent);
+
+if ($identResult->isSuccess()) {
+    // Step 2: Usage validation (dry-run)
+    $usageValidation = TimeUsageRequest::dryRun($walletPassId, 'solarium-booth-1');
+    $validationResult = $deviceApi->time()->usage($usageValidation);
+
+    if ($validationResult->isSuccess()) {
+        // Step 3: Execute usage (book benefit/charge customer)
+        $actualUsage = TimeUsageRequest::create($walletPassId, 'solarium-booth-1', true);
+        $usageResult = $deviceApi->time()->usage($actualUsage);
+    }
+}
+```
+
+### Dry-Run Support
+
+All device operations support dry-run mode for validation without execution:
+
+```php
+// Validate access without actually granting it
+$dryRunRequest = CardReaderIdentificationRequest::dryRun($cardId);
+$validation = $deviceApi->access()->cardReaderIdentification($dryRunRequest);
+
+if ($validation->isSuccess()) {
+    // Now perform the actual operation
+    $actualRequest = CardReaderIdentificationRequest::create($cardId, true);
+    $deviceApi->access()->cardReaderIdentification($actualRequest);
+}
+
+// Validate vending purchase without processing payment
+$dryRunSale = VendingSaleRequest::dryRun($qrId, 'txn-123', 'shelf-A1', 2.50);
+$saleValidation = $deviceApi->vending()->sale($dryRunSale);
+```
+
+### Money and Transaction Handling
+
+The Device API includes robust money handling with currency support:
+
+```php
+use AlexBabintsev\Magicline\Device\DTOs\Money;
+
+// Create money objects with automatic currency formatting
+$price = Money::create(2.50, 'EUR');
+echo $price->format(); // "2.50 EUR"
+
+// Convert to/from cents for precise calculations
+$cents = $price->toCents(); // 250
+$fromCents = Money::fromCents(250, 'EUR'); // 2.50 EUR
+
+// Built-in validation methods
+if ($price->isPositive()) {
+    // Process transaction
+}
+```
+
+### Identification Method Validation
+
+Each identification type includes built-in validation:
+
+```php
+// Card number format validation
+$cardId = CardNumberIdentification::decimal('1234567890');
+if ($cardId->isValidDecimal()) {
+    // Process decimal card number
+}
+
+$hexCard = CardNumberIdentification::hexMsb('1A2B3C4D');
+if ($hexCard->isValidHex()) {
+    // Process hex card number
+}
+
+// UUID validation for Wallet Pass
+$walletPass = WalletPassIdentification::create('123e4567-e89b-12d3-a456-426614174000');
+if ($walletPass->isValidUuid()) {
+    echo "UUID Version: " . $walletPass->getUuidVersion();
+}
+
+// QR Code data extraction
+$qrCode = QrCodeIdentification::create('{"uuid":"customer-uuid","tenant":"gym1"}');
+if ($qrCode->isJson()) {
+    $customerUuid = $qrCode->getCustomerUuid();
+    $tenant = $qrCode->getTenant();
+}
+```
+
+### Error Handling and Reliability
+
+The Device API includes robust error handling for various scenarios:
+
+```php
+use AlexBabintsev\Magicline\Exceptions\MagiclineApiException;
+
+try {
+    $response = $deviceApi->vending()->identification($request);
+} catch (MagiclineApiException $e) {
+    if ($e->getHttpStatusCode() === 503) {
+        // Database transaction timeout - safe to retry
+        logger()->warning('Device API timeout, retrying...', [
+            'device_type' => 'vending',
+            'transaction_id' => $request->getTransactionId()
+        ]);
+
+        // Retry after delay
+        sleep(2);
+        $response = $deviceApi->vending()->identification($request);
+    } else {
+        // Other API errors (customer not authorized, etc.)
+        logger()->error('Device API error', [
+            'status' => $e->getHttpStatusCode(),
+            'error' => $e->getMessage(),
+            'details' => $e->getErrorDetails()
+        ]);
+    }
+}
+```
+
+### Localization Support
+
+The Device API supports 15+ languages for error messages and responses:
+
+```php
+// Configure language via Accept-Language header
+$deviceApi = app(MagiclineDevice::class);
+
+// Supported languages: cs, de, en, es, fr, hu, it, nb, nl, pl, ro, ru, sl, sv, tr
+// Country variants: de-CH, de-LI, en-CA, en-GB, en-US, fr-LU
+
+// Language is automatically set based on:
+// 1. Accept-Language header (if provided)
+// 2. Studio's configured language (fallback)
+// 3. English (default fallback)
+
+// The HTTP client automatically handles localization
+$response = $deviceApi->access()->cardReaderIdentification($request);
+// Error messages will be in the appropriate language
+```
+
+### Production Considerations
+
+Important considerations for production deployments:
+
+```php
+// 1. Token Management
+// Store device tokens securely per device
+$deviceTokens = [
+    'card-reader-1' => 'bearer-token-1',
+    'vending-machine-a' => 'bearer-token-2',
+    'time-tracker-booth-1' => 'bearer-token-3',
+];
+
+// 2. Concurrency for Vending Machines
+// Implement proper locking mechanism
+Redis::lock("vending-customer-{$customerId}", 30)->block(5, function () use ($deviceApi, $request) {
+    return $deviceApi->vending()->identification($request);
+});
+
+// 3. Timeout Configuration
+// Coordinate with studio operators on appropriate timeout values
+$timeouts = [
+    'idle_timeout' => 15,        // seconds after identification
+    'product_draw_timeout' => 30, // seconds between selection and purchase
+];
+
+// 4. Monitoring and Logging
+// Log all device operations for audit trail
+logger()->info('Device operation', [
+    'device_id' => $deviceId,
+    'operation' => 'identification',
+    'customer_id' => $customerId,
+    'transaction_id' => $transactionId,
+    'success' => $response->isSuccess()
+]);
+
+// 5. Error Recovery
+// Implement retry logic for transient failures
+$retryAttempts = 3;
+$retryDelay = 1000; // milliseconds
+
+// This is handled automatically by the HTTP client
+```
+
 ## Connect API Features
 
 ### Timezone Support
@@ -518,6 +985,131 @@ $contract = MagiclineConnect::contracts()->create([
         ]
     ]
 ]);
+```
+
+## Webhook Features
+
+### Automatic Event Dispatching
+
+The webhook system automatically dispatches Laravel events for all incoming Magicline webhooks:
+
+```php
+// Supported webhook events are automatically converted to Laravel events
+// Example: CUSTOMER_CREATED webhook becomes CustomerCreated Laravel event
+
+protected $listen = [
+    \AlexBabintsev\Magicline\Webhooks\Events\CustomerCreated::class => [
+        App\Listeners\SendWelcomeEmail::class,
+        App\Listeners\CreateUserAccount::class,
+    ],
+    \AlexBabintsev\Magicline\Webhooks\Events\PaymentFailed::class => [
+        App\Listeners\NotifyAccountingTeam::class,
+        App\Listeners\SuspendMembership::class,
+    ],
+];
+```
+
+### Webhook Validation and Security
+
+All webhooks are automatically validated for security:
+
+```php
+// Add the middleware to your webhook route
+Route::post('/magicline/webhook', [WebhookController::class, 'handle'])
+    ->middleware([
+        'api',
+        \AlexBabintsev\Magicline\Webhooks\Middleware\VerifyWebhookSignature::class
+    ]);
+```
+
+The middleware provides:
+- **API Key Authentication**: Validates X-API-KEY header using timing-safe comparison
+- **Content Type Validation**: Ensures JSON payloads
+- **Request Method Validation**: Only allows POST requests
+- **Automatic Logging**: Configurable request/response logging
+
+### Event Processing
+
+```php
+// Access webhook data in your listeners
+class HandleCustomerUpdate
+{
+    public function handle(\AlexBabintsev\Magicline\Webhooks\Events\CustomerUpdated $event): void
+    {
+        $webhookEvent = $event->webhookEvent;
+
+        // Access all webhook data
+        $customerId = $webhookEvent->entityId;
+        $eventType = $webhookEvent->eventType; // 'CUSTOMER_UPDATED'
+        $timestamp = $webhookEvent->eventDateTime;
+        $studioId = $webhookEvent->studioId;
+
+        // Process asynchronously for performance
+        ProcessCustomerUpdate::dispatch($customerId, $webhookEvent->toArray());
+    }
+}
+```
+
+### Event Categories and Priorities
+
+Different event types have different processing priorities:
+
+```php
+// High priority events (immediate processing required)
+- PAYMENT_FAILED
+- SYSTEM_MAINTENANCE_SCHEDULED
+- DEVICE_DEACTIVATED
+
+// Medium priority events (process within minutes)
+- CUSTOMER_CREATED, CUSTOMER_UPDATED
+- CONTRACT_CREATED, CONTRACT_UPDATED
+- APPOINTMENT_BOOKING_CREATED
+
+// Low priority events (process within hours)
+- CUSTOMER_DELETED
+- TRIAL_SESSION_CANCELLED
+- EMPLOYEE_UPDATED
+```
+
+### Webhook Status and Monitoring
+
+```php
+// Check webhook processing status
+Route::get('/magicline/webhook/status', [WebhookController::class, 'status']);
+
+// Returns JSON with system status:
+{
+    "status": "ok",
+    "timestamp": "2024-02-03T10:15:30.000Z",
+    "version": "1.0.0"
+}
+```
+
+### Handling Processing Failures
+
+```php
+// The webhook handler includes automatic error handling
+class YourWebhookListener
+{
+    public function handle($event): void
+    {
+        try {
+            // Your processing logic
+            $this->processWebhookEvent($event->webhookEvent);
+        } catch (\Exception $e) {
+            // Webhook system will log the error and continue
+            // Your application won't crash from webhook processing errors
+            logger()->error('Webhook processing failed', [
+                'event_type' => $event->webhookEvent->eventType,
+                'entity_id' => $event->webhookEvent->entityId,
+                'error' => $e->getMessage()
+            ]);
+
+            // Optionally re-queue for retry
+            ProcessWebhookEvent::dispatch($event->webhookEvent)->delay(now()->addMinutes(5));
+        }
+    }
+}
 ```
 
 ## Testing

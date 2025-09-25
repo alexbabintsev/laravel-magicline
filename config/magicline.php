@@ -102,4 +102,29 @@ return [
             'level' => env('MAGICLINE_WEBHOOK_LOGGING_LEVEL', 'info'),
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Device API Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the Magicline Device API - for device integrations
+    | like card readers, vending machines, and time devices. Uses Bearer token
+    | authentication with a separate base URL.
+    |
+    */
+
+    'device' => [
+        'base_url' => env('MAGICLINE_DEVICE_BASE_URL', 'https://open-api-demo.devices.magicline.com'),
+        'bearer_token' => env('MAGICLINE_DEVICE_BEARER_TOKEN'),
+        'timeout' => env('MAGICLINE_DEVICE_TIMEOUT', 30),
+        'retry' => [
+            'times' => env('MAGICLINE_DEVICE_RETRY_TIMES', 3),
+            'delay' => env('MAGICLINE_DEVICE_RETRY_DELAY', 1000),
+        ],
+        'logging' => [
+            'enabled' => env('MAGICLINE_DEVICE_LOGGING_ENABLED', true),
+            'level' => env('MAGICLINE_DEVICE_LOGGING_LEVEL', 'info'),
+        ],
+    ],
 ];

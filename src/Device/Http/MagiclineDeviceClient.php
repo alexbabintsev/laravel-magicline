@@ -7,7 +7,6 @@ use AlexBabintsev\Magicline\Exceptions\MagiclineAuthenticationException;
 use AlexBabintsev\Magicline\Traits\LogsApiOperations;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerInterface;
 
 class MagiclineDeviceClient
@@ -23,8 +22,7 @@ class MagiclineDeviceClient
         private readonly int $retryDelay = 1000,
         private readonly ?LoggerInterface $logger = null,
         private readonly bool $loggingEnabled = true
-    ) {
-    }
+    ) {}
 
     /**
      * Make a GET request
@@ -68,10 +66,10 @@ class MagiclineDeviceClient
         array $query = [],
         array $headers = []
     ): array {
-        $url = $this->baseUrl . '/' . ltrim($endpoint, '/');
+        $url = $this->baseUrl.'/'.ltrim($endpoint, '/');
 
         $defaultHeaders = [
-            'Authorization' => 'Bearer ' . $this->bearerToken,
+            'Authorization' => 'Bearer '.$this->bearerToken,
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
         ];
@@ -139,7 +137,6 @@ class MagiclineDeviceClient
 
         return $responseData;
     }
-
 
     /**
      * Get the base URL

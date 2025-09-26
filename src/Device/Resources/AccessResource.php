@@ -8,9 +8,7 @@ use AlexBabintsev\Magicline\Device\Http\MagiclineDeviceClient;
 
 class AccessResource
 {
-    public function __construct(private readonly MagiclineDeviceClient $client)
-    {
-    }
+    public function __construct(private readonly MagiclineDeviceClient $client) {}
 
     public function cardReaderIdentification(CardReaderIdentificationRequest $request): CardReaderIdentificationResponse
     {

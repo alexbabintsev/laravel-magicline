@@ -2,9 +2,9 @@
 
 namespace AlexBabintsev\Magicline\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property string $resource_type
@@ -45,14 +45,21 @@ class MagiclineLog extends Model
     ];
 
     public const STATUS_SUCCESS = 'success';
+
     public const STATUS_FAILED = 'failed';
+
     public const STATUS_PENDING = 'pending';
 
     public const ACTION_CREATE = 'create';
+
     public const ACTION_UPDATE = 'update';
+
     public const ACTION_DELETE = 'delete';
+
     public const ACTION_LIST = 'list';
+
     public const ACTION_FIND = 'find';
+
     public const ACTION_SYNC = 'sync';
 
     /**

@@ -8,7 +8,7 @@ class Validation extends BaseConnectResource
      * Validate tax ID
      * Supports different document types and country-specific validation
      *
-     * @param array $params Validation parameters
+     * @param  array  $params  Validation parameters
      */
     public function validateTaxId(array $params): array
     {
@@ -23,7 +23,7 @@ class Validation extends BaseConnectResource
      * Get trial session validation configuration
      * Returns mandatory field configuration for forms
      *
-     * @param int $studioId Studio ID
+     * @param  int  $studioId  Studio ID
      */
     public function getTrialSessionConfig(int $studioId): array
     {
@@ -36,9 +36,9 @@ class Validation extends BaseConnectResource
      * Validate document identification
      * Client-side validation helper for different document types
      *
-     * @param string $documentType Document type (ID_CARD, PASSPORT, etc.)
-     * @param string $documentNumber Document number
-     * @param string|null $countryCode Country code for specific validation
+     * @param  string  $documentType  Document type (ID_CARD, PASSPORT, etc.)
+     * @param  string  $documentNumber  Document number
+     * @param  string|null  $countryCode  Country code for specific validation
      */
     public function validateDocumentIdentification(
         string $documentType,
@@ -48,15 +48,15 @@ class Validation extends BaseConnectResource
         if (empty($documentType) || empty($documentNumber)) {
             return [
                 'valid' => false,
-                'errors' => ['Both documentType and documentNumber are required']
+                'errors' => ['Both documentType and documentNumber are required'],
             ];
         }
 
         $validTypes = ['ID_CARD', 'PASSPORT', 'DRIVERS_LICENSE', 'RESIDENCE_PERMIT', 'NATIONAL_ID_NUMBER'];
-        if (!in_array($documentType, $validTypes)) {
+        if (! in_array($documentType, $validTypes)) {
             return [
                 'valid' => false,
-                'errors' => ['Invalid document type']
+                'errors' => ['Invalid document type'],
             ];
         }
 
@@ -71,7 +71,7 @@ class Validation extends BaseConnectResource
     /**
      * Validate Turkish TC Kimlik number
      *
-     * @param string $tcKimlik TC Kimlik number
+     * @param  string  $tcKimlik  TC Kimlik number
      */
     private function validateTurkishTCKimlik(string $tcKimlik): array
     {
@@ -81,14 +81,14 @@ class Validation extends BaseConnectResource
         if (strlen($tcKimlik) !== 11) {
             return [
                 'valid' => false,
-                'errors' => ['Turkish TC Kimlik must be 11 digits']
+                'errors' => ['Turkish TC Kimlik must be 11 digits'],
             ];
         }
 
         if ($tcKimlik[0] === '0') {
             return [
                 'valid' => false,
-                'errors' => ['Turkish TC Kimlik cannot start with 0']
+                'errors' => ['Turkish TC Kimlik cannot start with 0'],
             ];
         }
 
@@ -111,7 +111,7 @@ class Validation extends BaseConnectResource
         if ($checksum1 !== (int) $digits[9] || $checksum2 !== (int) $digits[10]) {
             return [
                 'valid' => false,
-                'errors' => ['Invalid Turkish TC Kimlik checksum']
+                'errors' => ['Invalid Turkish TC Kimlik checksum'],
             ];
         }
 

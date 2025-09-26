@@ -19,7 +19,7 @@ class Studios extends BaseConnectResource
      * Get studio communication settings
      * Required for detailed communication preferences
      *
-     * @param int $studioId Studio ID
+     * @param  int  $studioId  Studio ID
      */
     public function getCommunicationSettings(int $studioId): array
     {
@@ -41,7 +41,7 @@ class Studios extends BaseConnectResource
      * Get studio cancellation information
      * Returns cancellation reasons and other studio-specific info
      *
-     * @param int $studioId Studio ID
+     * @param  int  $studioId  Studio ID
      */
     public function getCancellationInfo(int $studioId): array
     {
@@ -54,7 +54,7 @@ class Studios extends BaseConnectResource
      * Get studio cancellation reasons (deprecated endpoint)
      * Use getCancellationInfo() instead for new implementations
      *
-     * @param int $studioId Studio ID
+     * @param  int  $studioId  Studio ID
      */
     public function getCancellationReasons(int $studioId): array
     {

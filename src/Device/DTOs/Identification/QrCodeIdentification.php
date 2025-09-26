@@ -48,6 +48,7 @@ class QrCodeIdentification extends BaseIdentification
     public function isJson(): bool
     {
         json_decode($this->value);
+
         return json_last_error() === JSON_ERROR_NONE;
     }
 
@@ -56,7 +57,7 @@ class QrCodeIdentification extends BaseIdentification
      */
     public function getDataArray(): ?array
     {
-        if (!$this->isJson()) {
+        if (! $this->isJson()) {
             return null;
         }
 
@@ -69,6 +70,7 @@ class QrCodeIdentification extends BaseIdentification
     public function getCustomerUuid(): ?string
     {
         $data = $this->getDataArray();
+
         return $data['uuid'] ?? null;
     }
 
@@ -78,6 +80,7 @@ class QrCodeIdentification extends BaseIdentification
     public function getCustomerNumber(): ?string
     {
         $data = $this->getDataArray();
+
         return $data['customer_number'] ?? null;
     }
 
@@ -87,6 +90,7 @@ class QrCodeIdentification extends BaseIdentification
     public function getTenant(): ?string
     {
         $data = $this->getDataArray();
+
         return $data['tenant'] ?? null;
     }
 }

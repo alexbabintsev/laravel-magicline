@@ -3,7 +3,6 @@
 use AlexBabintsev\Magicline\Device\Http\MagiclineDeviceClient;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Response;
-use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 
 beforeEach(function () {

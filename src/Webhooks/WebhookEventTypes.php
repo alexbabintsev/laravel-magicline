@@ -21,7 +21,9 @@ class WebhookEventTypes
 
     // Appointment booking events
     public const APPOINTMENT_BOOKING_CANCELLED = 'APPOINTMENT_BOOKING_CANCELLED';
+
     public const APPOINTMENT_BOOKING_CREATED = 'APPOINTMENT_BOOKING_CREATED';
+
     public const APPOINTMENT_BOOKING_UPDATED = 'APPOINTMENT_BOOKING_UPDATED';
 
     // Checkout events
@@ -29,25 +31,36 @@ class WebhookEventTypes
 
     // Contract events
     public const CONTRACT_UPDATED = 'CONTRACT_UPDATED';
+
     public const CONTRACT_CREATED = 'CONTRACT_CREATED';
+
     public const CONTRACT_CANCELLED = 'CONTRACT_CANCELLED';
 
     // Customer events
     public const CUSTOMER_CHECKIN = 'CUSTOMER_CHECKIN';
+
     public const CUSTOMER_CHECKOUT = 'CUSTOMER_CHECKOUT';
+
     public const CUSTOMER_CREATED = 'CUSTOMER_CREATED';
+
     public const CUSTOMER_DELETED = 'CUSTOMER_DELETED';
+
     public const CUSTOMER_UPDATED = 'CUSTOMER_UPDATED';
+
     public const CUSTOMER_COMMUNICATION_PREFERENCES_UPDATED = 'CUSTOMER_COMMUNICATION_PREFERENCES_UPDATED';
+
     public const CUSTOMER_ACCESS_DISABLED = 'CUSTOMER_ACCESS_DISABLED';
 
     // Class booking events
     public const CLASS_BOOKING_CANCELLED = 'CLASS_BOOKING_CANCELLED';
+
     public const CLASS_BOOKING_CREATED = 'CLASS_BOOKING_CREATED';
+
     public const CLASS_BOOKING_UPDATED = 'CLASS_BOOKING_UPDATED';
 
     // Class slot events
     public const CLASS_SLOT_CANCELLED = 'CLASS_SLOT_CANCELLED';
+
     public const CLASS_SLOT_UPDATED = 'CLASS_SLOT_UPDATED';
 
     // Device events
@@ -55,11 +68,14 @@ class WebhookEventTypes
 
     // Employee events
     public const EMPLOYEE_CREATED = 'EMPLOYEE_CREATED';
+
     public const EMPLOYEE_DELETED = 'EMPLOYEE_DELETED';
+
     public const EMPLOYEE_UPDATED = 'EMPLOYEE_UPDATED';
 
     // Finance events
     public const FINANCE_DEBT_COLLECTION_RUN_CREATED = 'FINANCE_DEBT_COLLECTION_RUN_CREATED';
+
     public const FINANCE_DEBT_COLLECTION_CONFIGURATION_UPDATED = 'FINANCE_DEBT_COLLECTION_CONFIGURATION_UPDATED';
 
     // Tax advisor events
@@ -71,6 +87,7 @@ class WebhookEventTypes
     public static function getAllEventTypes(): array
     {
         $reflection = new \ReflectionClass(self::class);
+
         return array_values($reflection->getConstants());
     }
 
@@ -78,7 +95,7 @@ class WebhookEventTypes
      * Get entity ID field name for given event type
      * Based on official Magicline documentation
      *
-     * @param string $eventType The webhook event type
+     * @param  string  $eventType  The webhook event type
      * @return string The corresponding entity ID field name
      */
     public static function getEntityIdField(string $eventType): string

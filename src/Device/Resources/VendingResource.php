@@ -10,9 +10,7 @@ use AlexBabintsev\Magicline\Device\Http\MagiclineDeviceClient;
 
 class VendingResource
 {
-    public function __construct(private readonly MagiclineDeviceClient $client)
-    {
-    }
+    public function __construct(private readonly MagiclineDeviceClient $client) {}
 
     public function identification(VendingIdentificationRequest $request): VendingIdentificationResponse
     {

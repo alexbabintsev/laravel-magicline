@@ -8,6 +8,7 @@ use AlexBabintsev\Magicline\Device\DTOs\Identification\BaseIdentification;
 class VendingIdentificationRequest extends BaseDto
 {
     public BaseIdentification $identification;
+
     public string $transactionId;
 
     protected function __construct(array $data)
@@ -27,7 +28,7 @@ class VendingIdentificationRequest extends BaseDto
     {
         return self::from([
             'identification' => $identification->toArray(),
-            'transactionId' => $transactionId
+            'transactionId' => $transactionId,
         ]);
     }
 
@@ -70,7 +71,7 @@ class VendingIdentificationRequest extends BaseDto
     {
         return [
             'identification' => $this->identification->toApiArray(),
-            'transactionId' => $this->transactionId
+            'transactionId' => $this->transactionId,
         ];
     }
 }

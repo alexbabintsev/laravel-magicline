@@ -8,6 +8,7 @@ use AlexBabintsev\Magicline\Device\DTOs\Identification\BaseIdentification;
 class CardReaderIdentificationRequest extends BaseDto
 {
     public BaseIdentification $identification;
+
     public bool $shouldExecuteAction;
 
     protected function __construct(array $data)
@@ -27,7 +28,7 @@ class CardReaderIdentificationRequest extends BaseDto
     {
         return self::from([
             'identification' => $identification->toArray(),
-            'shouldExecuteAction' => $shouldExecuteAction
+            'shouldExecuteAction' => $shouldExecuteAction,
         ]);
     }
 
@@ -44,7 +45,7 @@ class CardReaderIdentificationRequest extends BaseDto
      */
     public function isDryRun(): bool
     {
-        return !$this->shouldExecuteAction;
+        return ! $this->shouldExecuteAction;
     }
 
     /**
@@ -62,7 +63,7 @@ class CardReaderIdentificationRequest extends BaseDto
     {
         return [
             'identification' => $this->identification->toApiArray(),
-            'shouldExecuteAction' => $this->shouldExecuteAction
+            'shouldExecuteAction' => $this->shouldExecuteAction,
         ];
     }
 }

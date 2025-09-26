@@ -152,7 +152,7 @@ it('can get overall statistics', function () {
 });
 
 it('uses configurable table name', function () {
-    $log = new MagiclineLog();
+    $log = new MagiclineLog;
 
     // Should use default table name from config
     expect($log->getTable())->toBe('magicline_logs');
@@ -160,6 +160,6 @@ it('uses configurable table name', function () {
     // Test with different config value
     config(['magicline.logging.database.table' => 'custom_sync_logs']);
 
-    $customLog = new MagiclineLog();
+    $customLog = new MagiclineLog;
     expect($customLog->getTable())->toBe('custom_sync_logs');
 });

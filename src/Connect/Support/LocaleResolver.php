@@ -75,7 +75,7 @@ class LocaleResolver
 
         // 2. Combine language and country
         if ($language && $countryCode) {
-            $combined = $language . '_' . $countryCode;
+            $combined = $language.'_'.$countryCode;
             if (self::isValidLocale($combined)) {
                 return $combined;
             }

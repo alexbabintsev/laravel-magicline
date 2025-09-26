@@ -121,7 +121,7 @@ test('handles all official magicline event types', function () {
         'EMPLOYEE_UPDATED',
         'FINANCE_DEBT_COLLECTION_RUN_CREATED',
         'FINANCE_DEBT_COLLECTION_CONFIGURATION_UPDATED',
-        'TAX_ADVISOR_EXPORT_CREATED'
+        'TAX_ADVISOR_EXPORT_CREATED',
     ];
 
     foreach ($officialEvents as $event) {

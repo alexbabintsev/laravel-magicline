@@ -8,6 +8,7 @@ use AlexBabintsev\Magicline\Device\DTOs\Identification\BaseIdentification;
 class TimeIdentificationRequest extends BaseDto
 {
     public BaseIdentification $identification;
+
     public bool $shouldExecuteAction;
 
     protected function __construct(array $data)
@@ -24,7 +25,7 @@ class TimeIdentificationRequest extends BaseDto
     {
         return self::from([
             'identification' => $identification->toArray(),
-            'shouldExecuteAction' => $shouldExecuteAction
+            'shouldExecuteAction' => $shouldExecuteAction,
         ]);
     }
 
@@ -35,7 +36,7 @@ class TimeIdentificationRequest extends BaseDto
 
     public function isDryRun(): bool
     {
-        return !$this->shouldExecuteAction;
+        return ! $this->shouldExecuteAction;
     }
 
     public function getIdentification(): BaseIdentification
@@ -47,7 +48,7 @@ class TimeIdentificationRequest extends BaseDto
     {
         return [
             'identification' => $this->identification->toApiArray(),
-            'shouldExecuteAction' => $this->shouldExecuteAction
+            'shouldExecuteAction' => $this->shouldExecuteAction,
         ];
     }
 }

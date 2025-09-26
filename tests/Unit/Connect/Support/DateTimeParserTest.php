@@ -64,5 +64,5 @@ test('can extract timezone from new format', function () {
 });
 
 test('throws exception for empty datetime', function () {
-    expect(fn() => DateTimeParser::parse(''))->toThrow(InvalidArgumentException::class);
+    expect(fn () => DateTimeParser::parse(''))->toThrow(InvalidArgumentException::class);
 });

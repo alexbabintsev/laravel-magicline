@@ -12,8 +12,11 @@ use Psr\Log\LoggerInterface;
 class MagiclineDevice
 {
     private readonly MagiclineDeviceClient $client;
+
     private ?AccessResource $access = null;
+
     private ?VendingResource $vending = null;
+
     private ?TimeResource $time = null;
 
     public function __construct(

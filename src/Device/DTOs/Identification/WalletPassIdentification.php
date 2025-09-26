@@ -31,11 +31,12 @@ class WalletPassIdentification extends BaseIdentification
      */
     public function getUuidVersion(): ?int
     {
-        if (!$this->isValidUuid()) {
+        if (! $this->isValidUuid()) {
             return null;
         }
 
         $parts = explode('-', $this->value);
+
         return (int) $parts[2][0];
     }
 }

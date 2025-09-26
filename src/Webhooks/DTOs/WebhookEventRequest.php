@@ -7,7 +7,9 @@ use AlexBabintsev\Magicline\DataTransferObjects\BaseDto;
 class WebhookEventRequest extends BaseDto
 {
     public int $entityId;
+
     public string $uuid;
+
     /** @var WebhookEvent[] */
     public array $payload;
 
@@ -16,7 +18,7 @@ class WebhookEventRequest extends BaseDto
         $this->entityId = $data['entityId'];
         $this->uuid = $data['uuid'];
         $this->payload = array_map(
-            fn($event) => WebhookEvent::from($event),
+            fn ($event) => WebhookEvent::from($event),
             $data['payload'] ?? []
         );
     }
@@ -64,7 +66,7 @@ class WebhookEventRequest extends BaseDto
     {
         return array_filter(
             $this->payload,
-            fn(WebhookEvent $event) => $event->isType($type)
+            fn (WebhookEvent $event) => $event->isType($type)
         );
     }
 
@@ -73,7 +75,7 @@ class WebhookEventRequest extends BaseDto
      */
     public function hasEventType(string $type): bool
     {
-        return !empty($this->getEventsByType($type));
+        return ! empty($this->getEventsByType($type));
     }
 
     /**
@@ -99,7 +101,7 @@ class WebhookEventRequest extends BaseDto
     {
         return array_unique(
             array_map(
-                fn(WebhookEvent $event) => $event->getType(),
+                fn (WebhookEvent $event) => $event->getType(),
                 $this->payload
             )
         );

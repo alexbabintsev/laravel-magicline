@@ -7,8 +7,11 @@ use AlexBabintsev\Magicline\DataTransferObjects\BaseDto;
 class VendingIdentificationResponse extends BaseDto
 {
     public string $text;
+
     public bool $authorized;
+
     public float $consumptionCredit;
+
     public string $transactionId;
 
     /**
@@ -56,6 +59,6 @@ class VendingIdentificationResponse extends BaseDto
      */
     public function getFormattedCredit(string $currency = 'EUR'): string
     {
-        return number_format($this->consumptionCredit, 2) . ' ' . $currency;
+        return number_format($this->consumptionCredit, 2).' '.$currency;
     }
 }

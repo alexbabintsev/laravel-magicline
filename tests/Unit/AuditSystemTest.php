@@ -17,7 +17,7 @@ class SimpleTestClass
         return $this->executeWithLogging(
             $resourceType,
             $action,
-            fn() => ['success' => true, 'id' => 123]
+            fn () => ['success' => true, 'id' => 123]
         );
     }
 
@@ -26,7 +26,7 @@ class SimpleTestClass
         return $this->executeWithLogging(
             $resourceType,
             $action,
-            fn() => throw new \Exception('Test error')
+            fn () => throw new \Exception('Test error')
         );
     }
 
@@ -37,7 +37,7 @@ class SimpleTestClass
 }
 
 beforeEach(function () {
-    $this->testClass = new SimpleTestClass();
+    $this->testClass = new SimpleTestClass;
 });
 
 it('can log successful operations when database logging is enabled', function () {
@@ -58,7 +58,7 @@ it('can log successful operations when database logging is enabled', function ()
 it('can log failed operations when database logging is enabled', function () {
     Config::set('magicline.logging.database.enabled', true);
 
-    expect(fn() => $this->testClass->testFailedOperation('customers', 'delete'))
+    expect(fn () => $this->testClass->testFailedOperation('customers', 'delete'))
         ->toThrow(\Exception::class, 'Test error');
 
     $log = MagiclineLog::first();

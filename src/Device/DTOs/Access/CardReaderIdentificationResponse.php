@@ -7,6 +7,7 @@ use AlexBabintsev\Magicline\DataTransferObjects\BaseDto;
 class CardReaderIdentificationResponse extends BaseDto
 {
     public string $text;
+
     public bool $success;
 
     public function isSuccess(): bool

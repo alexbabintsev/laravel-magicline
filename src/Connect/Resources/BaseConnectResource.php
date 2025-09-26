@@ -15,7 +15,7 @@ abstract class BaseConnectResource
      */
     protected function buildQueryParams(array $params): array
     {
-        return array_filter($params, fn($value) => $value !== null);
+        return array_filter($params, fn ($value) => $value !== null);
     }
 
     /**
@@ -26,14 +26,14 @@ abstract class BaseConnectResource
         $missing = [];
 
         foreach ($required as $field) {
-            if (!isset($data[$field]) || $data[$field] === '') {
+            if (! isset($data[$field]) || $data[$field] === '') {
                 $missing[] = $field;
             }
         }
 
-        if (!empty($missing)) {
+        if (! empty($missing)) {
             throw new \InvalidArgumentException(
-                'Missing required fields: ' . implode(', ', $missing)
+                'Missing required fields: '.implode(', ', $missing)
             );
         }
     }
@@ -46,8 +46,10 @@ abstract class BaseConnectResource
         return array_filter($data, function ($value) {
             if (is_array($value)) {
                 $filtered = $this->filterEmptyValues($value);
-                return !empty($filtered);
+
+                return ! empty($filtered);
             }
+
             return $value !== null && $value !== '';
         });
     }

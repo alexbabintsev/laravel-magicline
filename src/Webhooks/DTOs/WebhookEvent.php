@@ -9,6 +9,7 @@ use Carbon\Carbon;
 class WebhookEvent extends BaseDto
 {
     public int $timestamp;
+
     public string $type;
 
     protected function __construct(array $data)
@@ -32,7 +33,6 @@ class WebhookEvent extends BaseDto
     {
         return $this->type;
     }
-
 
     /**
      * Check if event is of specific type

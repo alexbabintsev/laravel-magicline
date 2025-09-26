@@ -3,18 +3,18 @@
 namespace AlexBabintsev\Magicline\Connect;
 
 use AlexBabintsev\Magicline\Connect\Http\MagiclineConnectClient;
-use AlexBabintsev\Magicline\Connect\Resources\Studios;
-use AlexBabintsev\Magicline\Connect\Resources\Campaigns;
-use AlexBabintsev\Magicline\Connect\Resources\Referrals;
-use AlexBabintsev\Magicline\Connect\Resources\Validation;
 use AlexBabintsev\Magicline\Connect\Resources\AddressData;
-use AlexBabintsev\Magicline\Connect\Resources\Leads;
-use AlexBabintsev\Magicline\Connect\Resources\TrialSessions;
-use AlexBabintsev\Magicline\Connect\Resources\RateBundles;
+use AlexBabintsev\Magicline\Connect\Resources\Campaigns;
+use AlexBabintsev\Magicline\Connect\Resources\ContractCancellation;
 use AlexBabintsev\Magicline\Connect\Resources\Contracts;
 use AlexBabintsev\Magicline\Connect\Resources\CreditCardTokenization;
 use AlexBabintsev\Magicline\Connect\Resources\ImageUpload;
-use AlexBabintsev\Magicline\Connect\Resources\ContractCancellation;
+use AlexBabintsev\Magicline\Connect\Resources\Leads;
+use AlexBabintsev\Magicline\Connect\Resources\RateBundles;
+use AlexBabintsev\Magicline\Connect\Resources\Referrals;
+use AlexBabintsev\Magicline\Connect\Resources\Studios;
+use AlexBabintsev\Magicline\Connect\Resources\TrialSessions;
+use AlexBabintsev\Magicline\Connect\Resources\Validation;
 
 class MagiclineConnect
 {

@@ -15,7 +15,7 @@ class CreditCardTokenization extends BaseConnectResource
     /**
      * Initiate credit card tokenization
      *
-     * @param array $data Tokenization initiation data
+     * @param  array  $data  Tokenization initiation data
      */
     public function initiate(array $data): array
     {
@@ -29,8 +29,8 @@ class CreditCardTokenization extends BaseConnectResource
     /**
      * Complete credit card tokenization
      *
-     * @param string $tokenizationReference Tokenization reference UUID
-     * @param array $data Completion data (threeDSResult or redirectResult)
+     * @param  string  $tokenizationReference  Tokenization reference UUID
+     * @param  array  $data  Completion data (threeDSResult or redirectResult)
      */
     public function complete(string $tokenizationReference, array $data): array
     {
@@ -46,7 +46,7 @@ class CreditCardTokenization extends BaseConnectResource
     /**
      * Get tokenization state
      *
-     * @param string $tokenizationReference Tokenization reference UUID
+     * @param  string  $tokenizationReference  Tokenization reference UUID
      */
     public function getState(string $tokenizationReference): array
     {

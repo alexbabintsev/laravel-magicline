@@ -217,15 +217,16 @@ class MagiclineClient
     private function parseResourceFromUri(string $uri): array
     {
         // Remove leading slash and split by segments
-        $segments = explode('/', trim($uri, '/'));
+        $trimmedUri = trim($uri, '/');
+        if ($trimmedUri === '') {
+            return ['type' => 'unknown', 'id' => null];
+        }
+
+        $segments = explode('/', $trimmedUri);
 
         // Default values
         $type = 'unknown';
         $id = null;
-
-        if (empty($segments)) {
-            return ['type' => $type, 'id' => $id];
-        }
 
         // Map common URI patterns to resource types
         $resourceMap = [

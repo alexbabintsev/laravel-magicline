@@ -26,7 +26,7 @@ abstract class BaseConnectResource
         $missing = [];
 
         foreach ($required as $field) {
-            if (!isset($data[$field]) || $data[$field] === null || $data[$field] === '') {
+            if (!isset($data[$field]) || $data[$field] === '') {
                 $missing[] = $field;
             }
         }

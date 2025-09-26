@@ -6,6 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Carbon\Carbon;
 
+/**
+ * @property string $resource_type
+ * @property string|null $resource_id
+ * @property string $action
+ * @property array|null $request_data
+ * @property array|null $response_data
+ * @property string $status
+ * @property string|null $error_message
+ * @property Carbon $synced_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ */
 class MagiclineLog extends Model
 {
     public function __construct(array $attributes = [])

@@ -140,19 +140,6 @@ class MagiclineDeviceClient
         return $responseData;
     }
 
-    /**
-     * Sanitize headers for logging (remove sensitive data)
-     */
-    private function sanitizeHeaders(array $headers): array
-    {
-        $sanitized = $headers;
-
-        if (isset($sanitized['Authorization'])) {
-            $sanitized['Authorization'] = 'Bearer ***';
-        }
-
-        return $sanitized;
-    }
 
     /**
      * Get the base URL

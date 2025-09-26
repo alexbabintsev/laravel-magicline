@@ -23,7 +23,7 @@ class Money extends BaseDto
     /**
      * Format money as string
      */
-    public function format(string $currency = null): string
+    public function format(?string $currency = null): string
     {
         $displayCurrency = $currency ?? $this->currency;
         return number_format($this->amount, 2) . ' ' . $displayCurrency;

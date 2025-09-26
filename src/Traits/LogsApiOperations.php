@@ -251,9 +251,12 @@ trait LogsApiOperations
      */
     protected function logToFile(string $message, array $context = []): void
     {
-        if (method_exists($this, 'log') && $this->isLoggingEnabled()) {
-            $this->log('error', $message, $context);
+        if (!$this->isLoggingEnabled()) {
+            return;
         }
+
+        // Use Laravel's Log facade as fallback
+        \Illuminate\Support\Facades\Log::error($message, $context);
     }
 
     /**

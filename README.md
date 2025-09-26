@@ -16,7 +16,7 @@ Built with modern Laravel best practices, this package includes robust error han
 
 ## Requirements
 
-- PHP 8.1+
+- PHP 8.2+
 - Laravel 10.x, 11.x or 12.x
 
 ## Installation
@@ -265,7 +265,7 @@ The package provides automatic webhook handling with Laravel event dispatching:
 
 ```php
 // Add to routes/web.php or routes/api.php
-Route::post('/magicline/webhook', [WebhookController::class, 'handle'])
+Route::post('/magicline/webhook', [\AlexBabintsev\Magicline\Webhooks\Http\Controllers\WebhookController::class, 'handle'])
     ->middleware(['api', \AlexBabintsev\Magicline\Webhooks\Middleware\VerifyWebhookSignature::class]);
 
 // Listen to webhook events in your EventServiceProvider
@@ -610,20 +610,53 @@ php artisan magicline:test --endpoint=studios
 
 ### Webhook Event Types
 
-The package supports all 28 official Magicline webhook event types:
+The package supports all official Magicline webhook event types with automatic Laravel event dispatching:
 
-- **Customer Events**: `CUSTOMER_CREATED`, `CUSTOMER_UPDATED`, `CUSTOMER_DELETED`
-- **Contract Events**: `CONTRACT_CREATED`, `CONTRACT_UPDATED`, `CONTRACT_DELETED`
-- **Appointment Events**: `APPOINTMENT_BOOKING_CREATED`, `APPOINTMENT_BOOKING_UPDATED`, `APPOINTMENT_BOOKING_DELETED`
-- **Class Events**: `CLASS_BOOKING_CREATED`, `CLASS_BOOKING_UPDATED`, `CLASS_BOOKING_DELETED`
-- **Payment Events**: `PAYMENT_CREATED`, `PAYMENT_UPDATED`, `PAYMENT_FAILED`
-- **Trial Events**: `TRIAL_SESSION_CREATED`, `TRIAL_SESSION_UPDATED`, `TRIAL_SESSION_CANCELLED`
-- **Membership Events**: `MEMBERSHIP_CREATED`, `MEMBERSHIP_UPDATED`, `MEMBERSHIP_CANCELLED`
-- **Studio Events**: `STUDIO_UPDATED`
-- **Employee Events**: `EMPLOYEE_CREATED`, `EMPLOYEE_UPDATED`, `EMPLOYEE_DELETED`
-- **Device Events**: `DEVICE_ACTIVATED`, `DEVICE_DEACTIVATED`
-- **Check-in Events**: `CHECKIN_RECORDED`
-- **System Events**: `SYSTEM_MAINTENANCE_SCHEDULED`
+#### Customer Events
+- `CUSTOMER_CREATED` - Customer has been created
+- `CUSTOMER_UPDATED` - Customer's data has been changed
+- `CUSTOMER_DELETED` - Customer has been deleted
+- `CUSTOMER_CHECKIN` - Customer has physically checked in at facility
+- `CUSTOMER_CHECKOUT` - Customer has physically checked out from facility
+- `CUSTOMER_ACCESS_DISABLED` - Customer's access was disabled
+- `CUSTOMER_COMMUNICATION_PREFERENCES_UPDATED` - Communication preferences updated
+- `AGGREGATOR_MEMBER_CREATED` - Aggregator member was created
+
+#### Contract Events
+- `CONTRACT_CREATED` - Main contract was created
+- `CONTRACT_UPDATED` - Contract was changed
+- `CONTRACT_CANCELLED` - Contract was cancelled
+
+#### Booking Events
+- `APPOINTMENT_BOOKING_CREATED` - Appointment booking was created
+- `APPOINTMENT_BOOKING_UPDATED` - Appointment booking time or resource was updated
+- `APPOINTMENT_BOOKING_CANCELLED` - Appointment booking was cancelled
+- `CLASS_BOOKING_CREATED` - Class booking was created
+- `CLASS_BOOKING_UPDATED` - Class booking was updated
+- `CLASS_BOOKING_CANCELLED` - Class booking was cancelled
+
+#### Class Events
+- `CLASS_SLOT_UPDATED` - Class slot time or resource was updated
+- `CLASS_SLOT_CANCELLED` - Class slot was cancelled
+
+#### Employee Events
+- `EMPLOYEE_CREATED` - Employee has been created at facility
+- `EMPLOYEE_UPDATED` - Employee's data has been changed
+- `EMPLOYEE_DELETED` - Employee has been deleted
+
+#### Device Events
+- `DEVICE_CREATED` - Device was created
+
+#### Studio Events
+- `ADDITIONAL_INFORMATION_FIELDS_UPDATED` - Additional information field was updated
+- `AUTOMATIC_CUSTOMER_CHECKOUT` - One or multiple customers were automatically checked out
+
+#### Finance Events
+- `FINANCE_DEBT_COLLECTION_RUN_CREATED` - Debt collection run was created
+- `FINANCE_DEBT_COLLECTION_CONFIGURATION_UPDATED` - Debt collection configuration was updated
+
+#### Export Events
+- `TAX_ADVISOR_EXPORT_CREATED` - Tax advisor export was created
 
 ## Device API Features
 
@@ -1015,7 +1048,7 @@ All webhooks are automatically validated for security:
 
 ```php
 // Add the middleware to your webhook route
-Route::post('/magicline/webhook', [WebhookController::class, 'handle'])
+Route::post('/magicline/webhook', [\AlexBabintsev\Magicline\Webhooks\Http\Controllers\WebhookController::class, 'handle'])
     ->middleware([
         'api',
         \AlexBabintsev\Magicline\Webhooks\Middleware\VerifyWebhookSignature::class
@@ -1026,7 +1059,7 @@ The middleware provides:
 - **API Key Authentication**: Validates X-API-KEY header using timing-safe comparison
 - **Content Type Validation**: Ensures JSON payloads
 - **Request Method Validation**: Only allows POST requests
-- **Automatic Logging**: Configurable request/response logging
+- **Automatic Logging**: Configurable request/response logging via MagiclineLog model
 
 ### Event Processing
 
@@ -1075,7 +1108,7 @@ Different event types have different processing priorities:
 
 ```php
 // Check webhook processing status
-Route::get('/magicline/webhook/status', [WebhookController::class, 'status']);
+Route::get('/magicline/webhook/status', [\AlexBabintsev\Magicline\Webhooks\Http\Controllers\WebhookController::class, 'status']);
 
 // Returns JSON with system status:
 {
@@ -1083,6 +1116,27 @@ Route::get('/magicline/webhook/status', [WebhookController::class, 'status']);
     "timestamp": "2024-02-03T10:15:30.000Z",
     "version": "1.0.0"
 }
+```
+
+### Event Priority System
+
+The webhook system includes automatic event prioritization for processing efficiency:
+
+```php
+// High priority events (processed immediately)
+- CUSTOMER_CHECKIN/CHECKOUT - Real-time facility access
+- CONTRACT_CREATED/CANCELLED - Business critical operations
+- CUSTOMER_ACCESS_DISABLED - Security-related events
+
+// Medium priority events (processed within minutes)
+- CUSTOMER_CREATED/UPDATED - Customer data changes
+- BOOKING events - Appointment and class bookings
+- EMPLOYEE events - Staff management
+
+// Low priority events (processed within hours)
+- ADDITIONAL_INFORMATION_FIELDS_UPDATED - Configuration changes
+- TAX_ADVISOR_EXPORT_CREATED - Administrative exports
+- FINANCE_DEBT_COLLECTION events - Financial processes
 ```
 
 ### Handling Processing Failures

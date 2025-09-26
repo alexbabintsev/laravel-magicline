@@ -2,6 +2,44 @@
 
 All notable changes to `laravel-magicline` will be documented in this file.
 
+## [1.3.0] - 2025-09-26
+
+### Added
+- **Comprehensive Webhook System**: Complete webhook infrastructure with 27+ event types
+- **Webhook Event Types**: All official Magicline webhook events with automatic Laravel event dispatching
+- **Event Priority System**: Automatic prioritization for processing efficiency (1-5 priority levels)
+- **Database Logging**: MagiclineLog model for API operations tracking and audit trails
+- **WebhookController**: Complete webhook handling with security validation
+- **VerifyWebhookSignature Middleware**: API key authentication with timing-safe comparison
+- **WebhookEventTypes Class**: Comprehensive event type mapping, priorities, and descriptions
+
+### Enhanced
+- **Device API Features**: Complete hardware integration support for card readers, vending machines, and time tracking
+- **Webhook Events**: Expanded from 28 to 27+ official events with detailed categorization:
+  - Customer Events (8 types): CUSTOMER_CREATED, CUSTOMER_UPDATED, CUSTOMER_CHECKIN, etc.
+  - Contract Events (3 types): CONTRACT_CREATED, CONTRACT_UPDATED, CONTRACT_CANCELLED
+  - Booking Events (6 types): APPOINTMENT_BOOKING_*, CLASS_BOOKING_*
+  - Employee Events (3 types): EMPLOYEE_CREATED, EMPLOYEE_UPDATED, EMPLOYEE_DELETED
+  - Finance Events (2 types): FINANCE_DEBT_COLLECTION_*
+  - Studio, Device, Class, and Export events
+- **Documentation**: Complete rewrite with current implementation details and usage examples
+
+### Technical Improvements
+- **PHP Requirements**: Updated to PHP 8.2+ (from 8.1+)
+- **Namespace Consistency**: Updated all examples to use proper AlexBabintsev\Magicline namespace
+- **Event Processing**: Real-time event handling with priority-based queue processing
+- **Security**: Enhanced webhook validation with middleware-based authentication
+- **Logging**: Comprehensive API operation logging for debugging and compliance
+
+### Breaking Changes
+- **PHP Version**: Minimum PHP version increased to 8.2
+- **Webhook Routes**: Updated controller references in documentation
+
+### Documentation
+- **README.md**: Complete overhaul with current feature set and proper code examples
+- **CLAUDE.md**: Updated with full implementation status and architectural details
+- **Webhook Examples**: Comprehensive webhook handling examples with all event types
+
 ## [1.1.0] - 2025-09-24
 
 ### Added

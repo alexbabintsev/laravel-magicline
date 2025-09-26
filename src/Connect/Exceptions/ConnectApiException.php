@@ -33,6 +33,6 @@ class ConnectApiException extends Exception
 
     public function hasErrorDetails(): bool
     {
-        return !empty($this->errorDetails);
+        return ! empty($this->errorDetails);
     }
 }

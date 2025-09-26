@@ -16,8 +16,7 @@ class WebhookController extends Controller
 {
     public function __construct(
         private readonly WebhookHandler $webhookHandler
-    ) {
-    }
+    ) {}
 
     /**
      * Handle incoming webhook requests
@@ -31,21 +30,21 @@ class WebhookController extends Controller
             if ($validator->fails()) {
                 Log::warning('Webhook request validation failed', [
                     'errors' => $validator->errors(),
-                    'ip' => $request->ip()
+                    'ip' => $request->ip(),
                 ]);
 
                 return response()->json([
                     'error' => 'Invalid payload structure',
-                    'details' => $validator->errors()
+                    'details' => $validator->errors(),
                 ], Response::HTTP_BAD_REQUEST);
             }
 
             $payload = $request->json()->all();
 
             // Validate with WebhookHandler
-            if (!$this->webhookHandler->validatePayload($payload)) {
+            if (! $this->webhookHandler->validatePayload($payload)) {
                 return response()->json([
-                    'error' => 'Invalid webhook payload'
+                    'error' => 'Invalid webhook payload',
                 ], Response::HTTP_BAD_REQUEST);
             }
 
@@ -56,12 +55,12 @@ class WebhookController extends Controller
             if ($webhookRequest->getEventCount() === 0) {
                 Log::info('Webhook request with empty payload', [
                     'entityId' => $webhookRequest->getEntityId(),
-                    'uuid' => $webhookRequest->getUuid()
+                    'uuid' => $webhookRequest->getUuid(),
                 ]);
 
                 return response()->json([
                     'message' => 'No events to process',
-                    'processed' => 0
+                    'processed' => 0,
                 ]);
             }
 
@@ -78,29 +77,29 @@ class WebhookController extends Controller
                 'processed' => $stats['total_events'],
                 'entity_id' => $stats['entity_id'],
                 'request_uuid' => $stats['request_uuid'],
-                'event_types' => $stats['event_types']
+                'event_types' => $stats['event_types'],
             ]);
 
         } catch (WebhookProcessingException $e) {
             Log::error('Webhook processing failed', [
                 'error' => $e->getMessage(),
-                'ip' => $request->ip()
+                'ip' => $request->ip(),
             ]);
 
             return response()->json([
                 'error' => 'Webhook processing failed',
-                'message' => 'An error occurred while processing the webhook'
+                'message' => 'An error occurred while processing the webhook',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
 
         } catch (\Exception $e) {
             Log::error('Unexpected webhook error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'ip' => $request->ip()
+                'ip' => $request->ip(),
             ]);
 
             return response()->json([
-                'error' => 'Internal server error'
+                'error' => 'Internal server error',
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -114,7 +113,7 @@ class WebhookController extends Controller
             'status' => 'active',
             'service' => 'Magicline Webhooks',
             'version' => '1.0.0',
-            'timestamp' => now()->toISOString()
+            'timestamp' => now()->toISOString(),
         ]);
     }
 
@@ -131,7 +130,7 @@ class WebhookController extends Controller
         ];
 
         // Only validate payload events if they exist
-        if (!empty($data['payload'])) {
+        if (! empty($data['payload'])) {
             $rules['payload.*.timestamp'] = 'required|integer|min:0';
             $rules['payload.*.type'] = 'required|string|min:1';
         }
@@ -147,7 +146,7 @@ class WebhookController extends Controller
             'payload.*.timestamp.required' => 'Event timestamp is required',
             'payload.*.timestamp.integer' => 'Event timestamp must be an integer',
             'payload.*.type.required' => 'Event type is required',
-            'payload.*.type.string' => 'Event type must be a string'
+            'payload.*.type.string' => 'Event type must be a string',
         ]);
     }
 }

@@ -7,7 +7,9 @@ class CardNumberIdentification extends BaseIdentification
     public string $format;
 
     public const FORMAT_DECIMAL = 'DECIMAL';
+
     public const FORMAT_HEX_MSB = 'HEX_MSB';
+
     public const FORMAT_HEX_LSB = 'HEX_LSB';
 
     protected function __construct(array $data)
@@ -24,7 +26,7 @@ class CardNumberIdentification extends BaseIdentification
     {
         return self::from([
             'value' => $cardNumber,
-            'format' => self::FORMAT_DECIMAL
+            'format' => self::FORMAT_DECIMAL,
         ]);
     }
 
@@ -35,7 +37,7 @@ class CardNumberIdentification extends BaseIdentification
     {
         return self::from([
             'value' => $cardNumber,
-            'format' => self::FORMAT_HEX_MSB
+            'format' => self::FORMAT_HEX_MSB,
         ]);
     }
 
@@ -46,7 +48,7 @@ class CardNumberIdentification extends BaseIdentification
     {
         return self::from([
             'value' => $cardNumber,
-            'format' => self::FORMAT_HEX_LSB
+            'format' => self::FORMAT_HEX_LSB,
         ]);
     }
 

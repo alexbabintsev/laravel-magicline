@@ -3,9 +3,9 @@
 namespace AlexBabintsev\Magicline;
 
 use AlexBabintsev\Magicline\Commands\MagiclineCommand;
-use AlexBabintsev\Magicline\Http\MagiclineClient;
 use AlexBabintsev\Magicline\Connect\Http\MagiclineConnectClient;
 use AlexBabintsev\Magicline\Connect\MagiclineConnect;
+use AlexBabintsev\Magicline\Http\MagiclineClient;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Log;
 use Spatie\LaravelPackageTools\Package;

@@ -5,7 +5,6 @@ namespace AlexBabintsev\Magicline\Webhooks;
 use AlexBabintsev\Magicline\Webhooks\DTOs\WebhookEvent;
 use AlexBabintsev\Magicline\Webhooks\DTOs\WebhookEventRequest;
 use AlexBabintsev\Magicline\Webhooks\Exceptions\WebhookProcessingException;
-use AlexBabintsev\Magicline\Webhooks\WebhookEventTypes;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -21,7 +20,7 @@ class WebhookHandler
             'entityId' => $request->getEntityId(),
             'uuid' => $request->getUuid(),
             'eventCount' => $request->getEventCount(),
-            'eventTypes' => $request->getEventTypes()
+            'eventTypes' => $request->getEventTypes(),
         ]);
 
         // Process events asynchronously as recommended by Magicline documentation
@@ -40,7 +39,7 @@ class WebhookHandler
             'type' => $event->getType(),
             'timestamp' => $event->getTimestamp()->toISOString(),
             'entityId' => $request->getEntityId(),
-            'entityType' => $event->getEntityTypeDescription()
+            'entityType' => $event->getEntityTypeDescription(),
         ]);
 
         // Dispatch Laravel events immediately (non-blocking)
@@ -50,7 +49,7 @@ class WebhookHandler
         // This ensures webhook endpoint responds quickly (< 5 seconds as required)
         Log::info('Webhook event scheduled for processing', [
             'type' => $event->getType(),
-            'entityId' => $request->getEntityId()
+            'entityId' => $request->getEntityId(),
         ]);
     }
 
@@ -63,7 +62,7 @@ class WebhookHandler
             Log::debug('Processing webhook event synchronously', [
                 'type' => $event->getType(),
                 'timestamp' => $event->getTimestamp()->toISOString(),
-                'entityId' => $request->getEntityId()
+                'entityId' => $request->getEntityId(),
             ]);
 
             // WARNING: According to Magicline docs, do NOT make API calls during webhook processing
@@ -74,14 +73,14 @@ class WebhookHandler
 
             Log::info('Webhook event processed successfully', [
                 'type' => $event->getType(),
-                'entityId' => $request->getEntityId()
+                'entityId' => $request->getEntityId(),
             ]);
 
         } catch (\Exception $e) {
             Log::error('Failed to process webhook event', [
                 'type' => $event->getType(),
                 'entityId' => $request->getEntityId(),
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
 
             throw new WebhookProcessingException(
@@ -141,19 +140,21 @@ class WebhookHandler
         $requiredFields = ['entityId', 'uuid', 'payload'];
 
         foreach ($requiredFields as $field) {
-            if (!array_key_exists($field, $payload)) {
+            if (! array_key_exists($field, $payload)) {
                 Log::warning('Webhook payload missing required field', [
                     'field' => $field,
-                    'payload' => $payload
+                    'payload' => $payload,
                 ]);
+
                 return false;
             }
         }
 
-        if (!is_array($payload['payload'])) {
+        if (! is_array($payload['payload'])) {
             Log::warning('Webhook payload field must be array', [
-                'payload' => $payload
+                'payload' => $payload,
             ]);
+
             return false;
         }
 
@@ -205,8 +206,8 @@ class WebhookHandler
                 'employee' => 0,
                 'finance' => 0,
                 'export' => 0,
-                'unknown' => 0
-            ]
+                'unknown' => 0,
+            ],
         ];
 
         foreach ($events as $event) {

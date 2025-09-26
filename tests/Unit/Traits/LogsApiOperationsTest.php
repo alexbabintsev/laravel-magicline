@@ -20,7 +20,7 @@ class TestClassWithLogging
         return $this->logOperationStart($resourceType, $action);
     }
 
-    public function testLogOperationSuccess(string $resourceType, string $action, array $responseData = null)
+    public function testLogOperationSuccess(string $resourceType, string $action, ?array $responseData = null)
     {
         $this->logOperationSuccess($resourceType, $action, $responseData);
     }
@@ -47,14 +47,14 @@ class TestClassWithLogging
 }
 
 beforeEach(function () {
-    $this->testClass = new TestClassWithLogging();
+    $this->testClass = new TestClassWithLogging;
 });
 
 it('can execute operation with successful logging', function () {
     $result = $this->testClass->testExecuteWithLogging(
         'customers',
         'create',
-        fn() => ['id' => 123, 'name' => 'John Doe']
+        fn () => ['id' => 123, 'name' => 'John Doe']
     );
 
     expect($result)->toBe(['id' => 123, 'name' => 'John Doe']);
@@ -67,10 +67,10 @@ it('can execute operation with successful logging', function () {
 });
 
 it('can execute operation with error logging', function () {
-    expect(fn() => $this->testClass->testExecuteWithLogging(
+    expect(fn () => $this->testClass->testExecuteWithLogging(
         'customers',
         'create',
-        fn() => throw new Exception('Database error')
+        fn () => throw new Exception('Database error')
     ))->toThrow(Exception::class, 'Database error');
 
     $log = MagiclineLog::first();
@@ -151,7 +151,8 @@ it('sanitizes sensitive response data', function () {
 
 it('handles logging failures gracefully', function () {
     // Create a test class that disables database logging to simulate graceful handling
-    $testClass = new class {
+    $testClass = new class
+    {
         use LogsApiOperations;
 
         protected function isDatabaseLoggingEnabled(): bool
@@ -164,7 +165,7 @@ it('handles logging failures gracefully', function () {
             return $this->executeWithLogging(
                 'customers',
                 'create',
-                fn() => ['success' => true]
+                fn () => ['success' => true]
             );
         }
     };

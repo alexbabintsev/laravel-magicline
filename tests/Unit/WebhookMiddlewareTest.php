@@ -1,145 +1,145 @@
 <?php
+
 use AlexBabintsev\Magicline\Webhooks\Middleware\VerifyWebhookSignature;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
-    $this->middleware = new VerifyWebhookSignature();
+    $this->middleware = new VerifyWebhookSignature;
     config(['magicline.webhooks.api_key' => 'test-api-key-123']);
 });
 
-    test('allows request with valid api key', function () {
-        $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
-        $request->headers->set('X-API-KEY', 'test-api-key-123');
-        $request->headers->set('Content-Type', 'application/json');
+test('allows request with valid api key', function () {
+    $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
+    $request->headers->set('X-API-KEY', 'test-api-key-123');
+    $request->headers->set('Content-Type', 'application/json');
 
-        $response = $this->middleware->handle($request, function ($req) {
-            return response()->json(['success' => true]);
-        });
-
-        expect($response->getStatusCode())->toBe(Response::HTTP_OK);
+    $response = $this->middleware->handle($request, function ($req) {
+        return response()->json(['success' => true]);
     });
 
-    test('rejects request with missing api key header', function () {
+    expect($response->getStatusCode())->toBe(Response::HTTP_OK);
+});
 
-        $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
-        $request->headers->set('Content-Type', 'application/json');
+test('rejects request with missing api key header', function () {
 
-        $response = $this->middleware->handle($request, function ($req) {
-            return response()->json(['success' => true]);
-        });
+    $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
+    $request->headers->set('Content-Type', 'application/json');
 
-        expect($response->getStatusCode())->toBe(Response::HTTP_UNAUTHORIZED);
-
-        $responseData = json_decode($response->getContent(), true);
-        expect($responseData['error'])->toBe('Missing X-API-KEY header');
-
+    $response = $this->middleware->handle($request, function ($req) {
+        return response()->json(['success' => true]);
     });
 
-    test('rejects request with invalid api key', function () {
+    expect($response->getStatusCode())->toBe(Response::HTTP_UNAUTHORIZED);
 
-        $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
-        $request->headers->set('X-API-KEY', 'invalid-key');
-        $request->headers->set('Content-Type', 'application/json');
+    $responseData = json_decode($response->getContent(), true);
+    expect($responseData['error'])->toBe('Missing X-API-KEY header');
 
-        $response = $this->middleware->handle($request, function ($req) {
-            return response()->json(['success' => true]);
-        });
+});
 
-        expect($response->getStatusCode())->toBe(Response::HTTP_UNAUTHORIZED);
+test('rejects request with invalid api key', function () {
 
-        $responseData = json_decode($response->getContent(), true);
-        expect($responseData['error'])->toBe('Invalid X-API-KEY');
+    $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
+    $request->headers->set('X-API-KEY', 'invalid-key');
+    $request->headers->set('Content-Type', 'application/json');
 
+    $response = $this->middleware->handle($request, function ($req) {
+        return response()->json(['success' => true]);
     });
 
-    test('rejects non-json requests', function () {
+    expect($response->getStatusCode())->toBe(Response::HTTP_UNAUTHORIZED);
 
-        $request = Request::create('/webhook', 'POST', ['test' => 'data']);
-        $request->headers->set('X-API-KEY', 'test-api-key-123');
-        $request->headers->set('Content-Type', 'application/x-www-form-urlencoded');
+    $responseData = json_decode($response->getContent(), true);
+    expect($responseData['error'])->toBe('Invalid X-API-KEY');
 
-        $response = $this->middleware->handle($request, function ($req) {
-            return response()->json(['success' => true]);
-        });
+});
 
-        expect($response->getStatusCode())->toBe(Response::HTTP_BAD_REQUEST);
+test('rejects non-json requests', function () {
 
-        $responseData = json_decode($response->getContent(), true);
-        expect($responseData['error'])->toBe('Content-Type must be application/json');
+    $request = Request::create('/webhook', 'POST', ['test' => 'data']);
+    $request->headers->set('X-API-KEY', 'test-api-key-123');
+    $request->headers->set('Content-Type', 'application/x-www-form-urlencoded');
 
+    $response = $this->middleware->handle($request, function ($req) {
+        return response()->json(['success' => true]);
     });
 
-    test('rejects non-post requests', function () {
+    expect($response->getStatusCode())->toBe(Response::HTTP_BAD_REQUEST);
 
-        $request = Request::create('/webhook', 'GET');
-        $request->headers->set('X-API-KEY', 'test-api-key-123');
-        $request->headers->set('Content-Type', 'application/json');
+    $responseData = json_decode($response->getContent(), true);
+    expect($responseData['error'])->toBe('Content-Type must be application/json');
 
-        $response = $this->middleware->handle($request, function ($req) {
-            return response()->json(['success' => true]);
-        });
+});
 
-        expect($response->getStatusCode())->toBe(Response::HTTP_METHOD_NOT_ALLOWED);
+test('rejects non-post requests', function () {
 
-        $responseData = json_decode($response->getContent(), true);
-        expect($responseData['error'])->toBe('Method not allowed. Only POST requests are supported');
+    $request = Request::create('/webhook', 'GET');
+    $request->headers->set('X-API-KEY', 'test-api-key-123');
+    $request->headers->set('Content-Type', 'application/json');
 
+    $response = $this->middleware->handle($request, function ($req) {
+        return response()->json(['success' => true]);
     });
 
-    test('returns error when webhook api key not configured', function () {
+    expect($response->getStatusCode())->toBe(Response::HTTP_METHOD_NOT_ALLOWED);
 
-        // Override config to remove API key
-        config(['magicline.webhooks.api_key' => null]);
+    $responseData = json_decode($response->getContent(), true);
+    expect($responseData['error'])->toBe('Method not allowed. Only POST requests are supported');
 
-        $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
-        $request->headers->set('X-API-KEY', 'any-key');
-        $request->headers->set('Content-Type', 'application/json');
+});
 
-        $response = $this->middleware->handle($request, function ($req) {
-            return response()->json(['success' => true]);
-        });
+test('returns error when webhook api key not configured', function () {
 
-        expect($response->getStatusCode())->toBe(Response::HTTP_INTERNAL_SERVER_ERROR);
+    // Override config to remove API key
+    config(['magicline.webhooks.api_key' => null]);
 
-        $responseData = json_decode($response->getContent(), true);
-        expect($responseData['error'])->toBe('Webhook authentication not configured');
+    $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
+    $request->headers->set('X-API-KEY', 'any-key');
+    $request->headers->set('Content-Type', 'application/json');
 
+    $response = $this->middleware->handle($request, function ($req) {
+        return response()->json(['success' => true]);
     });
 
-    test('uses timing-safe comparison for api keys', function () {
-        // This test ensures we're using hash_equals for security
-        $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
-        $request->headers->set('X-API-KEY', 'test-api-key-123');
-        $request->headers->set('Content-Type', 'application/json');
+    expect($response->getStatusCode())->toBe(Response::HTTP_INTERNAL_SERVER_ERROR);
 
-        $response = $this->middleware->handle($request, function ($req) {
-            return response()->json(['success' => true]);
-        });
+    $responseData = json_decode($response->getContent(), true);
+    expect($responseData['error'])->toBe('Webhook authentication not configured');
 
-        expect($response->getStatusCode())->toBe(Response::HTTP_OK);
+});
 
-        // Test with similar but different key
-        $request2 = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
-        $request2->headers->set('X-API-KEY', 'test-api-key-124'); // Different last character
-        $request2->headers->set('Content-Type', 'application/json');
+test('uses timing-safe comparison for api keys', function () {
+    // This test ensures we're using hash_equals for security
+    $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
+    $request->headers->set('X-API-KEY', 'test-api-key-123');
+    $request->headers->set('Content-Type', 'application/json');
 
-        $response2 = $this->middleware->handle($request2, function ($req) {
-            return response()->json(['success' => true]);
-        });
-
-        expect($response2->getStatusCode())->toBe(Response::HTTP_UNAUTHORIZED);
+    $response = $this->middleware->handle($request, function ($req) {
+        return response()->json(['success' => true]);
     });
 
-    test('logs request information for debugging', function () {
-        $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
-        $request->headers->set('X-API-KEY', 'test-api-key-123');
-        $request->headers->set('Content-Type', 'application/json');
+    expect($response->getStatusCode())->toBe(Response::HTTP_OK);
 
-        $response = $this->middleware->handle($request, function ($req) {
-            return response()->json(['success' => true]);
-        });
+    // Test with similar but different key
+    $request2 = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
+    $request2->headers->set('X-API-KEY', 'test-api-key-124'); // Different last character
+    $request2->headers->set('Content-Type', 'application/json');
 
-        expect($response->getStatusCode())->toBe(200);
+    $response2 = $this->middleware->handle($request2, function ($req) {
+        return response()->json(['success' => true]);
     });
+
+    expect($response2->getStatusCode())->toBe(Response::HTTP_UNAUTHORIZED);
+});
+
+test('logs request information for debugging', function () {
+    $request = Request::create('/webhook', 'POST', [], [], [], [], json_encode(['test' => 'data']));
+    $request->headers->set('X-API-KEY', 'test-api-key-123');
+    $request->headers->set('Content-Type', 'application/json');
+
+    $response = $this->middleware->handle($request, function ($req) {
+        return response()->json(['success' => true]);
+    });
+
+    expect($response->getStatusCode())->toBe(200);
+});

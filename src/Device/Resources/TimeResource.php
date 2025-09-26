@@ -8,9 +8,7 @@ use AlexBabintsev\Magicline\Device\Http\MagiclineDeviceClient;
 
 class TimeResource
 {
-    public function __construct(private readonly MagiclineDeviceClient $client)
-    {
-    }
+    public function __construct(private readonly MagiclineDeviceClient $client) {}
 
     public function identification(TimeIdentificationRequest $request): TimeIdentificationResponse
     {

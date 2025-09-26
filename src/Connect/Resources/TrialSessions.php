@@ -7,7 +7,7 @@ class TrialSessions extends BaseConnectResource
     /**
      * Get available trial session slots
      *
-     * @param array $params Query parameters (startDate, endDate, studioId)
+     * @param  array  $params  Query parameters (startDate, endDate, studioId)
      */
     public function getAvailableSlots(array $params): array
     {
@@ -21,7 +21,7 @@ class TrialSessions extends BaseConnectResource
     /**
      * Book a trial session
      *
-     * @param array $data Booking data including leadCustomer and slot information
+     * @param  array  $data  Booking data including leadCustomer and slot information
      */
     public function book(array $data): array
     {
@@ -35,7 +35,7 @@ class TrialSessions extends BaseConnectResource
     /**
      * Get trial session validation configuration
      *
-     * @param int $studioId Studio ID
+     * @param  int  $studioId  Studio ID
      */
     public function getValidationConfig(int $studioId): array
     {

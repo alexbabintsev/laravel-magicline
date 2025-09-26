@@ -8,9 +8,13 @@ use AlexBabintsev\Magicline\Device\DTOs\Identification\BaseIdentification;
 class VendingSaleRequest extends BaseDto
 {
     public BaseIdentification $identification;
+
     public string $transactionId;
+
     public string $productId;
+
     public float $price;
+
     public bool $shouldExecuteAction;
 
     protected function __construct(array $data)
@@ -41,7 +45,7 @@ class VendingSaleRequest extends BaseDto
             'transactionId' => $transactionId,
             'productId' => $productId,
             'price' => $price,
-            'shouldExecuteAction' => $shouldExecuteAction
+            'shouldExecuteAction' => $shouldExecuteAction,
         ]);
     }
 
@@ -62,7 +66,7 @@ class VendingSaleRequest extends BaseDto
      */
     public function isDryRun(): bool
     {
-        return !$this->shouldExecuteAction;
+        return ! $this->shouldExecuteAction;
     }
 
     /**
@@ -102,7 +106,7 @@ class VendingSaleRequest extends BaseDto
      */
     public function getFormattedPrice(string $currency = 'EUR'): string
     {
-        return number_format($this->price, 2) . ' ' . $currency;
+        return number_format($this->price, 2).' '.$currency;
     }
 
     /**
@@ -115,7 +119,7 @@ class VendingSaleRequest extends BaseDto
             'transactionId' => $this->transactionId,
             'productId' => $this->productId,
             'price' => $this->price,
-            'shouldExecuteAction' => $this->shouldExecuteAction
+            'shouldExecuteAction' => $this->shouldExecuteAction,
         ];
     }
 }

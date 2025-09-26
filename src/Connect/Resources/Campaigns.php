@@ -18,8 +18,8 @@ class Campaigns extends BaseConnectResource
     /**
      * Get campaigns for specific studio
      *
-     * @param int $studioId Studio ID
-     * @param array $params Additional query parameters
+     * @param  int  $studioId  Studio ID
+     * @param  array  $params  Additional query parameters
      */
     public function getForStudio(int $studioId, array $params = []): array
     {

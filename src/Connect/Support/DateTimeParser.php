@@ -24,8 +24,8 @@ class DateTimeParser
             // Remove timezone name from brackets: [Europe/Berlin]
             $withoutTimezone = preg_replace('/\[.*\]$/', '', $dateTime);
 
-            if (!$withoutTimezone) {
-                throw new InvalidArgumentException('Invalid datetime format: ' . $dateTime);
+            if (! $withoutTimezone) {
+                throw new InvalidArgumentException('Invalid datetime format: '.$dateTime);
             }
 
             try {
@@ -33,7 +33,7 @@ class DateTimeParser
                 return Carbon::createFromFormat('Y-m-d\TH:i:s.vP', $withoutTimezone)
                     ?: Carbon::createFromFormat('Y-m-d\TH:i:sP', $withoutTimezone);
             } catch (\Exception $e) {
-                throw new InvalidArgumentException('Failed to parse new datetime format: ' . $dateTime, 0, $e);
+                throw new InvalidArgumentException('Failed to parse new datetime format: '.$dateTime, 0, $e);
             }
         }
 
@@ -43,7 +43,7 @@ class DateTimeParser
                 return Carbon::createFromFormat('Y-m-d\TH:i:s.v\Z', $dateTime, 'UTC')
                     ?: Carbon::createFromFormat('Y-m-d\TH:i:s\Z', $dateTime, 'UTC');
             } catch (\Exception $e) {
-                throw new InvalidArgumentException('Failed to parse old datetime format: ' . $dateTime, 0, $e);
+                throw new InvalidArgumentException('Failed to parse old datetime format: '.$dateTime, 0, $e);
             }
         }
 
@@ -51,7 +51,7 @@ class DateTimeParser
         try {
             return Carbon::parse($dateTime);
         } catch (\Exception $e) {
-            throw new InvalidArgumentException('Unrecognized datetime format: ' . $dateTime, 0, $e);
+            throw new InvalidArgumentException('Unrecognized datetime format: '.$dateTime, 0, $e);
         }
     }
 
@@ -62,12 +62,14 @@ class DateTimeParser
     {
         if ($timezone) {
             $dateTime = $dateTime->setTimezone($timezone);
-            return $dateTime->format('Y-m-d\TH:i:s.vP') . '[' . $timezone . ']';
+
+            return $dateTime->format('Y-m-d\TH:i:s.vP').'['.$timezone.']';
         }
 
         // If no timezone specified, use the datetime's current timezone
         $tz = $dateTime->getTimezone()->getName();
-        return $dateTime->format('Y-m-d\TH:i:s.vP') . '[' . $tz . ']';
+
+        return $dateTime->format('Y-m-d\TH:i:s.vP').'['.$tz.']';
     }
 
     /**
@@ -116,11 +118,12 @@ class DateTimeParser
      */
     public static function extractTimezone(string $dateTime): ?string
     {
-        if (!self::isNewFormat($dateTime)) {
+        if (! self::isNewFormat($dateTime)) {
             return null;
         }
 
         preg_match('/\[([^\]]+)\]$/', $dateTime, $matches);
+
         return $matches[1] ?? null;
     }
 }

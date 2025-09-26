@@ -7,6 +7,7 @@ use AlexBabintsev\Magicline\DataTransferObjects\BaseDto;
 class Money extends BaseDto
 {
     public float $amount;
+
     public string $currency;
 
     /**
@@ -16,7 +17,7 @@ class Money extends BaseDto
     {
         return self::from([
             'amount' => $amount,
-            'currency' => strtoupper($currency)
+            'currency' => strtoupper($currency),
         ]);
     }
 
@@ -26,7 +27,8 @@ class Money extends BaseDto
     public function format(?string $currency = null): string
     {
         $displayCurrency = $currency ?? $this->currency;
-        return number_format($this->amount, 2) . ' ' . $displayCurrency;
+
+        return number_format($this->amount, 2).' '.$displayCurrency;
     }
 
     /**

@@ -108,7 +108,7 @@ class MagiclineConnectClient
         $this->log('Response', $endpoint, [
             'method' => $method,
             'status' => $statusCode,
-            'body' => $body
+            'body' => $body,
         ]);
 
         if ($response->successful()) {
@@ -129,7 +129,7 @@ class MagiclineConnectClient
 
     private function log(string $action, string $endpoint, array $context = []): void
     {
-        if (!$this->loggingEnabled) {
+        if (! $this->loggingEnabled) {
             return;
         }
 

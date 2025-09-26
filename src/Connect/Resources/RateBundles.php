@@ -7,8 +7,8 @@ class RateBundles extends BaseConnectResource
     /**
      * Get rate bundles for a studio
      *
-     * @param int $studioId Studio ID
-     * @param array $params Additional query parameters
+     * @param  int  $studioId  Studio ID
+     * @param  array  $params  Additional query parameters
      */
     public function getForStudio(int $studioId, array $params = []): array
     {
@@ -23,7 +23,7 @@ class RateBundles extends BaseConnectResource
     /**
      * Get list of rate bundles
      *
-     * @param array $params Query parameters
+     * @param  array  $params  Query parameters
      */
     public function list(array $params = []): array
     {

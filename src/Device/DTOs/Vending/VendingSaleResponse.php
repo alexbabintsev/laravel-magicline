@@ -7,7 +7,9 @@ use AlexBabintsev\Magicline\DataTransferObjects\BaseDto;
 class VendingSaleResponse extends BaseDto
 {
     public string $text;
+
     public bool $success;
+
     public string $transactionId;
 
     public function isSuccess(): bool

@@ -7,7 +7,7 @@ class Leads extends BaseConnectResource
     /**
      * Create a new lead
      *
-     * @param array $data Lead data including customer information
+     * @param  array  $data  Lead data including customer information
      */
     public function create(array $data): array
     {
@@ -21,7 +21,7 @@ class Leads extends BaseConnectResource
     /**
      * Get lead customer data by identity token (UUID)
      *
-     * @param string $uuid Identity token UUID
+     * @param  string  $uuid  Identity token UUID
      */
     public function getByUuid(string $uuid): array
     {

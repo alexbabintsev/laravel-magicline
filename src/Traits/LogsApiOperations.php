@@ -17,7 +17,7 @@ trait LogsApiOperations
         ?string $resourceId = null,
         ?array $requestData = null
     ): ?MagiclineLog {
-        if (!$this->isDatabaseLoggingEnabled()) {
+        if (! $this->isDatabaseLoggingEnabled()) {
             return null;
         }
 
@@ -46,7 +46,7 @@ trait LogsApiOperations
         ?array $requestData = null,
         ?MagiclineLog $existingLog = null
     ): void {
-        if (!$this->isDatabaseLoggingEnabled()) {
+        if (! $this->isDatabaseLoggingEnabled()) {
             return;
         }
 
@@ -86,7 +86,7 @@ trait LogsApiOperations
         ?array $responseData = null,
         ?MagiclineLog $existingLog = null
     ): void {
-        if (!$this->isDatabaseLoggingEnabled()) {
+        if (! $this->isDatabaseLoggingEnabled()) {
             return;
         }
 
@@ -251,7 +251,7 @@ trait LogsApiOperations
      */
     protected function logToFile(string $message, array $context = []): void
     {
-        if (!$this->isLoggingEnabled()) {
+        if (! $this->isLoggingEnabled()) {
             return;
         }
 

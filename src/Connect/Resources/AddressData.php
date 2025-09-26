@@ -8,7 +8,7 @@ class AddressData extends BaseConnectResource
      * Get province information for Italy by zip code
      * Used for address validation in Italian addresses
      *
-     * @param string $zipCode Italian zip code
+     * @param  string  $zipCode  Italian zip code
      */
     public function getItalianProvince(string $zipCode): array
     {
@@ -31,7 +31,7 @@ class AddressData extends BaseConnectResource
     /**
      * Get countries with locale support
      *
-     * @param string|null $locale Locale for country names (e.g., 'de_DE', 'en_US')
+     * @param  string|null  $locale  Locale for country names (e.g., 'de_DE', 'en_US')
      */
     public function getCountriesWithLocale(?string $locale = null): array
     {
@@ -47,8 +47,8 @@ class AddressData extends BaseConnectResource
      * Validate address data
      * Client-side validation helper for address completeness
      *
-     * @param array $address Address data to validate
-     * @param array $requiredFields List of required fields
+     * @param  array  $address  Address data to validate
+     * @param  array  $requiredFields  List of required fields
      */
     public function validateAddress(array $address, array $requiredFields = ['country', 'city', 'zip']): array
     {
@@ -61,29 +61,29 @@ class AddressData extends BaseConnectResource
         }
 
         // Validate specific formats
-        if (isset($address['zip']) && !empty($address['zip'])) {
-            if (!$this->validateZipCode($address['zip'], $address['country'] ?? '')) {
+        if (isset($address['zip']) && ! empty($address['zip'])) {
+            if (! $this->validateZipCode($address['zip'], $address['country'] ?? '')) {
                 $errors[] = 'Invalid zip code format';
             }
         }
 
-        if (isset($address['country']) && !empty($address['country'])) {
-            if (!$this->validateCountryCode($address['country'])) {
+        if (isset($address['country']) && ! empty($address['country'])) {
+            if (! $this->validateCountryCode($address['country'])) {
                 $errors[] = 'Invalid country code';
             }
         }
 
         return [
             'valid' => empty($errors),
-            'errors' => $errors
+            'errors' => $errors,
         ];
     }
 
     /**
      * Validate zip code format by country
      *
-     * @param string $zipCode Zip code to validate
-     * @param string $countryCode Country code
+     * @param  string  $zipCode  Zip code to validate
+     * @param  string  $countryCode  Country code
      */
     private function validateZipCode(string $zipCode, string $countryCode): bool
     {
@@ -99,7 +99,7 @@ class AddressData extends BaseConnectResource
             'NL' => '/^\d{4}\s?[A-Z]{2}$/i', // Netherlands: 1234 AB
         ];
 
-        if (!isset($patterns[$countryCode])) {
+        if (! isset($patterns[$countryCode])) {
             return true; // No validation pattern, assume valid
         }
 
@@ -109,7 +109,7 @@ class AddressData extends BaseConnectResource
     /**
      * Validate country code format
      *
-     * @param string $countryCode Country code to validate
+     * @param  string  $countryCode  Country code to validate
      */
     private function validateCountryCode(string $countryCode): bool
     {

@@ -7,6 +7,7 @@ use AlexBabintsev\Magicline\DataTransferObjects\BaseDto;
 abstract class BaseIdentification extends BaseDto
 {
     public string $type;
+
     public string $value;
 
     /**

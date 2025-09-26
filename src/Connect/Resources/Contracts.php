@@ -7,7 +7,7 @@ class Contracts extends BaseConnectResource
     /**
      * Create contract preview
      *
-     * @param array $data Preview data
+     * @param  array  $data  Preview data
      */
     public function preview(array $data): array
     {
@@ -19,7 +19,7 @@ class Contracts extends BaseConnectResource
     /**
      * Create a new contract and customer
      *
-     * @param array $data Contract and customer data
+     * @param  array  $data  Contract and customer data
      */
     public function create(array $data): array
     {
@@ -31,7 +31,7 @@ class Contracts extends BaseConnectResource
     /**
      * Get active contracts for member
      *
-     * @param array $data Member identification data
+     * @param  array  $data  Member identification data
      */
     public function getActiveContracts(array $data): array
     {
@@ -43,7 +43,7 @@ class Contracts extends BaseConnectResource
     /**
      * Cancel a contract
      *
-     * @param array $data Cancellation data
+     * @param  array  $data  Cancellation data
      */
     public function cancel(array $data): array
     {
